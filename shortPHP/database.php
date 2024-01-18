@@ -48,7 +48,7 @@
         return $items;
     }
 
-    function selecionar($tabela, $row, $param)
+    public function selecionar($tabela, $row, $param)
     // FAZ UMA CONSULTA NO SQL COM O TÍTULO DO EVENTO E RETORNA UM ARRAY 
     {
         try {
@@ -68,7 +68,7 @@
         }
     }
 
-    function escrever($table, $row, $param)
+    public function escrever($table, $row, $param)
     // FAZ UMA CONSULTA NO SQL E ESCREVE O RESULTADO
     {
         try {
@@ -85,7 +85,7 @@
         }
     }
 
-    function contar($proposito, $tabela, $param)
+    public function contar($proposito, $tabela, $param)
     // FAZ UMA CONTAGEM E RETORNA A QUANTIDADE DE ITENS DE ACORDO COM OS PARÂMETROS
     {
         try {
@@ -104,7 +104,7 @@
         }
     }
 
-    function criarPrepare($sql)
+    public function criarPrepare($sql)
     // CRIAR PREPARE E ENVIAR PARA O BANCO DE DADOS
     {
         $this->conn = $this->novaConexao();
@@ -113,7 +113,7 @@
         return $stmt;
     }
 
-    function enviarDados($sql)
+    public function enviarDados($sql)
     // ENVIA OS DADOS PARA O BANCO DE DADOS
     {
         $this->conn = $this->novaConexao();

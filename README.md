@@ -1,12 +1,11 @@
 # ShortPHP 1.0
 Um simples Framework PHP para conexões simples com PHPMyAdmin e outros utilitários.
-![](https://img.shields.io/github/stars/pandao/editor.md.svg) ![](https://img.shields.io/github/forks/pandao/editor.md.svg) ![](https://img.shields.io/github/tag/pandao/editor.md.svg) ![](https://img.shields.io/github/release/pandao/editor.md.svg) ![](https://img.shields.io/github/issues/pandao/editor.md.svg) ![](https://img.shields.io/bower/v/editor.md.svg)
 
 ## Banco de Dados
 Para configurar é simples, você deverá inicializar a conexão instanciando a classe Conn com os parâmetros do seu banco de dados, que são respectivamente o **Servidor**, **Banco de Dados**, **Usuário** e **Senha**.
 Exemplo:
 
-    $meusCarros = new shortPHP("servidor", "database", "usuario", "senha");
+    $meusCarros = new shortPHP("localhost", "carros", "root", "12345");
 
 |Comando| Resultado |
 |--|--|
