@@ -14,8 +14,8 @@ trait fArray {
                 $novoArray[$i] = shortPHP::arredondar($items);
             }
             return $novoArray;
-        } catch (Exception $erro) {
-            echo $erro->getMessage();
+        } catch (Error $erro) {
+            echo "Erro: " . $erro->getMessage();
         }
     }
 

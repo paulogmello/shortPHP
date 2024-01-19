@@ -44,7 +44,7 @@ trait Math
             } else if(is_numeric($numero) == true) {
                 return $numero;
             }
-        } catch (Exception $erro) {
+        } catch (Error $erro) {
             echo $erro->getMessage();
         }
     }

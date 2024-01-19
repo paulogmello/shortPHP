@@ -6,9 +6,8 @@ if(count($_POST) > 0){
     $titulo = $_POST['titulo'];
     $valor = $_POST['valor'];
     $categ = $_POST['categ'];
-    $desc = $_POST['desc'];
-    $sql = "DELETE FROM `tabela` WHERE id = 1";
-    $meuBd->excluirDados($sql);
+    $arquivo = $_POST['desc'];
+    $meuBd->enviar('tabela', 'titulo, valor, categ, arquivo', $titulo, $valor, $categ, $arquivo);
 }
 
 ?>

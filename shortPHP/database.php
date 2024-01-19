@@ -104,10 +104,17 @@
         }
     }
 
-    public function enviarDados($sql, ...$param)
+    public function enviar($tabela, $linhas, ...$param)
     // ENVIA OS DADOS PARA O BANCO DE DADOS
     {
         try {
+            //Organizar o SQL
+            $qntItems = explode(',', $linhas);
+            $qntItems = count($qntItems);
+            $values = str_repeat('?,', $qntItems - 1) . '?';
+            
+            $sql = "INSERT INTO $tabela ($linhas) VALUES ($values)"; // SQL pronto
+
             $tipos = []; // tipos para o bind_param baseado no foreach abaixo
             foreach ($param as $i => $items) {
                 if (filter_var($items, FILTER_VALIDATE_INT) == true) {
@@ -149,7 +156,7 @@
         }
     }
 
-    public function excluirDados($sql)
+    public function excluir($sql)
     {
         // EXCLUI DADOS DO SERVIDOR COM BASE NO SQL
         try {
