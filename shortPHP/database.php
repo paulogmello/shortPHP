@@ -54,6 +54,7 @@
         try {
             $this->conn = $this->novaConexao();
             $result = $this->buscar("SELECT $row FROM $tabela $param");
+            
             if ($result->num_rows) {
                 $items = $this->adicionarItens($result);
             }
@@ -156,10 +157,11 @@
         }
     }
 
-    public function excluir($sql)
+    public function excluir($tabela, $param)
     {
         // EXCLUI DADOS DO SERVIDOR COM BASE NO SQL
         try {
+            $sql = "DELETE FROM $tabela WHERE $param";
             $this->conn = $this->novaConexao();
             $stmt = $this->conn->prepare($sql);
 

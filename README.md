@@ -27,13 +27,13 @@ Exemplos:
     $meusCarros->enviar('carros', 'marca, modelo, valor, placa', $marca, $modelo, $valor, $placa);
     
     // Excluirá dados do banco de dados
-    $meusCarros->excluir("DELETE FROM carros WHERE id =  34");
+    $meusCarros->excluir("carros", "marca = 'fiat'");
     
     // Irá retornar um array com apenas carros da marca Fiat
     $fiat = $meusCarros->selecionar("carros", "*" , "WHERE carros = 'fiat'");
     
     // Retornará uma string com o valor baseado no parâmetro
-    $facebook = $meusCarros->escrever("socialmedia", "link", "WHERE titulo = 'facebook'");
+    $facebook = $meusCarros->escrever("socialmedia", "link", "WHERE titulo = 'facebook'";
     
 
 
