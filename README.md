@@ -1,10 +1,23 @@
 # shortPHP 1.0 (Em desenvolvimento)
-Um simples Framework PHP para agilizar conexões com PHPMyAdmin e outros utilitários.
+Uma biblioteca para facilitar a conexão com o PHPMyAdmin + utilitários
+
+## Planejamento
+
+ - [x] Adicionar ao composer
+ - [ ] Aprimorar segurança contra SQL Injection;
+ - [ ] Comandos **CREATE**, **ALTER**, **DROP** e  **SHOW**;
+ - [ ] Criação de **VIEW**, **FUNCTIONS** e **TRIGGERS**;
 
 ## Inicialização
-Para adicionar o **shortPHP** no seu projeto, dê include no arquivo **config.php** dentro do diretório do shortPHP, como no exemplo:
+Adicione no seu composer
 
-    <?php  include  './shortPHP/config.php'; // inclue o shortPHP  ?>
+    "require":  {  "paulogmello/shortPHP":  "dev-main"  }
+
+Ou baixe e faça o include do arquivo **shortPHP.php**
+
+    require_once "./shortPHP.php";
+
+
 
 ## Banco de Dados
 Para configurar é simples, você deverá inicializar a conexão instanciando a classe **shortPHP** com os parâmetros do seu banco de dados, que são respectivamente o **Servidor**, **Banco de Dados**, **Usuário** e **Senha**.
@@ -50,7 +63,7 @@ O shortPHP tem várias funções para ajudar a facilitar o trabalho, para usa-la
     $minhaMediaEscolar = shortPHP::media(10,8,6,8); retorna 8
     $valores = shortPHP::arredondamento(5.6, 8.2, 84); retorna Array ( [0] => 6 [1] => 8 [2] => 84 )
 
-#### Catálogo de funções
+#### Exemplo de funções
 Novas funções são adicionadas a cada atualização
 
 | Função | Resultado |
@@ -62,5 +75,8 @@ Novas funções são adicionadas a cada atualização
 | arredondamento(...$n) | Recebe um array e retorna outro com todos os números arredondados |
 | media(...$n) | Recebe um array com vários números e retorna a média aritimética simples deles|
 | arrayJavascript($arrayPHP, $nomeArrayJavascript) | Converte um array PHP para um array Javascript |
-|  |  |
+
+Veja a **lista completa** de funções utilizando o comando
+
+    shortPHP::ajuda();
 
