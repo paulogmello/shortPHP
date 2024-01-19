@@ -2,7 +2,7 @@
 Um simples Framework PHP para agilizar conexões com PHPMyAdmin e outros utilitários.
 
 ## Banco de Dados
-Para configurar é simples, você deverá inicializar a conexão instanciando a classe shortPHP com os parâmetros do seu banco de dados, que são respectivamente o **Servidor**, **Banco de Dados**, **Usuário** e **Senha**.
+Para configurar é simples, você deverá inicializar a conexão instanciando a classe **shortPHP** com os parâmetros do seu banco de dados, que são respectivamente o **Servidor**, **Banco de Dados**, **Usuário** e **Senha**.
 Exemplo:
 
     $meusCarros = new shortPHP("localhost", "carros", "root", "12345");
