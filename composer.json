@@ -1,17 +1,19 @@
 {
-    "name": "paulogmello/short-php",
-    "description": "Uma ferramenta PHP para facilitar conexões com banco de dados + funções utilitárias",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Paulo Guilherme Mello",
-            "email": "paulogmfs@gmail.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "shortPHP\\": "src/"
-        }
+  "name": "paulogmello/short-php",
+  "description": "Uma ferramenta PHP para facilitar conexões com banco de dados + funções utilitárias",
+  "type": "library",
+  "license": "MIT",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "authors": [
+    {
+      "name": "Paulo Guilherme Mello",
+      "email": "paulogmfs@gmail.com"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "shortPHP\\": "src/"
+    }
+  }
 }
