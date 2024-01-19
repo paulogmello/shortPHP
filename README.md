@@ -15,8 +15,6 @@ Exemplo:
 | escrever| Escreve o conteúdo com base nos parâmetros SQL |
 | contar| Escreve a quantidade de linhas encontradas com base nos parâmetros SQL|
 
-
-
 Exemplos:
 
     //Enviar dados para o banco de dados na tabela *carros*
@@ -45,7 +43,7 @@ Exemplos:
 O shortPHP tem várias funções para ajudar a facilitar o trabalho, para usa-las, siga o exemplo:
 
     $minhaMediaEscolar = shortPHP::media(10,8,6,8); retorna 8
-    $valores = shortPHP::arredondamento(5.6, 8.2, 84); retorna Array ( [0] => 6 [1] => 8 [2] => 84 ) valores passados na função.
+    $valores = shortPHP::arredondamento(5.6, 8.2, 84); retorna Array ( [0] => 6 [1] => 8 [2] => 84 )
 
 #### Catálogo de funções
 Novas funções são adicionadas a cada atualização
