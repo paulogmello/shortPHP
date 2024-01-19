@@ -104,20 +104,75 @@
         }
     }
 
-    public function criarPrepare($sql)
-    // CRIAR PREPARE E ENVIAR PARA O BANCO DE DADOS
-    {
-        $this->conn = $this->novaConexao();
-        $stmt = $this->conn->prepare($sql);
-        $this->encerrarConexao();
-        return $stmt;
-    }
-
-    public function enviarDados($sql)
+    public function enviarDados($sql, ...$param)
     // ENVIA OS DADOS PARA O BANCO DE DADOS
     {
-        $this->conn = $this->novaConexao();
-        mysqli_query($this->conn, $sql);
-        mysqli_close($this->conn);
+        try {
+            $tipos = []; // tipos para o bind_param baseado no foreach abaixo
+            foreach ($param as $i => $items) {
+                if (filter_var($items, FILTER_VALIDATE_INT) == true) {
+                    // Verificar se é INT
+                    $tipos[$i] = 'i';
+                } else if (filter_var($items, FILTER_VALIDATE_FLOAT) == true) {
+                    // Verificar se é FLOAT
+                    $tipos[$i] = 'd';
+                } else if (is_string($items) == true) {
+                    // Verificar se é STRING
+                    $tipos[$i] = 's';
+                } else {
+                    // Deve ser BOB;
+                    $tipos[$i] = 'b';
+                }
+            }
+
+            $tipos = implode('', $tipos); //Refatora os tipos do array
+
+            $this->conn = $this->novaConexao();
+            $stmt = $this->conn->prepare($sql); //Preparar sql
+
+            if (!$stmt) {
+                throw new Exception("Erro na preparação da declaração: " . $this->conn->error);
+            }
+
+            $bindResult = $stmt->bind_param($tipos, ...$param);
+
+            if (!$bindResult || !$stmt->execute()) {
+                throw new Exception("Houve um problema durante o envio de dados. Tipos: $tipos");
+            }
+
+            // Se chegou até aqui, a execução foi bem-sucedida
+            return true;
+        } catch (Exception $erro) {
+            echo "Erro: " . $erro->getMessage();
+        } finally {
+            $this->encerrarConexao(); //Encerrar conexão
+        }
+    }
+
+    public function excluirDados($sql)
+    {
+        // EXCLUI DADOS DO SERVIDOR COM BASE NO SQL
+        try {
+            $this->conn = $this->novaConexao();
+            $stmt = $this->conn->prepare($sql);
+
+            if (!$stmt) {
+                throw new Exception("Erro na preparação da declaração: " . $this->conn->error);
+            }
+
+            if (!$stmt->execute()) {
+                throw new Exception("Houve um problema durante a exclusão de dados.");
+            }
+
+            // Se chegou até aqui, a execução foi bem-sucedida
+            return true;
+        } catch (Exception $erro) {
+            // Captura e lida com exceções
+            echo "Erro: " . $erro->getMessage();
+            return false;
+        } finally {
+            // Certifique-se de fechar a conexão, independentemente do resultado
+            $this->encerrarConexao(); //Encerrar conexão
+        }
     }
 }

@@ -1,4 +1,4 @@
-# ShortPHP 1.0
+# ShortPHP 1.0 (Em desenvolvimento)
 Um simples Framework PHP para conexões simples com PHPMyAdmin e outros utilitários.
 
 ## Banco de Dados
