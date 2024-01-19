@@ -2,7 +2,7 @@
 Um simples Framework PHP para agilizar conexões com PHPMyAdmin e outros utilitários.
 
 ## Banco de Dados
-Para configurar é simples, você deverá inicializar a conexão instanciando a classe Conn com os parâmetros do seu banco de dados, que são respectivamente o **Servidor**, **Banco de Dados**, **Usuário** e **Senha**.
+Para configurar é simples, você deverá inicializar a conexão instanciando a classe shortPHP com os parâmetros do seu banco de dados, que são respectivamente o **Servidor**, **Banco de Dados**, **Usuário** e **Senha**.
 Exemplo:
 
     $meusCarros = new shortPHP("localhost", "carros", "root", "12345");
@@ -47,3 +47,16 @@ O shortPHP tem várias funções para ajudar a facilitar o trabalho, para usa-la
     $minhaMediaEscolar = shortPHP::media(10,8,6,8); retorna 8
     $valores = shortPHP::arredondamento(5.6, 8.2, 84); retorna Array ( [0] => 6 [1] => 8 [2] => 84 ) 
 O código acima irá retornar o valor da média aritmética simples com os valores passados na função.
+
+#### Catálogo de funções
+Novas funções são adicionadas a cada atualização
+
+| Função | Resultado |
+|--|--|
+| ajuda | Mostra na tela todos os componentes do shortPHP |
+| dados(min, max) | Recebe o mínimo e o máximo respectivamente e retorna um número aleatório entre eles |
+| arredondar($n) | Recebe um número e arredonda ele|
+| arredondamento(...$n) | Recebe um array e retorna outro com todos os números arredondados |
+| media(...$n) | Recebe um array com vários números e retorna a média aritimética simples deles|
+| a | a |
+
