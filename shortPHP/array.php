@@ -2,10 +2,7 @@
 // FUNÇÕES PARA ARRAYS
 
 trait fArray {
-    static function testeArray(){
-        return "As <b>funções Array</b> estão funcionando<br>";
-    }
-
+  
     static function arredondamento(...$array){
         // ARREDONDA VÁRIOS NÚMEROS
         try{
@@ -27,6 +24,13 @@ trait fArray {
             echo "`$items`,";
         }
         echo "] </script>";
+    }
+
+    static function ajudaArray(){
+        echo "<h3>Funções de Array</h3><br>";
+        echo '<b>arredondamento(...$array)</b>: Arredonda vários números<br>';
+        echo '<b>arrayJavascript($arrayPHP, $nomeArrayJavascript)</b>: Transforma um array PHP em Javascript<br>';
+        echo '----------------------<br>';
     }
 }
 ?>

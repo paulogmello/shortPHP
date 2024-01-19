@@ -3,13 +3,6 @@
 // FUNÇÕES ARITMÉTICAS
 trait Math
 {
-
-    static function testeMath()
-    {
-        // TESTE DE FUNCIONALIDADE
-        return "As <b>funções Matemáticas</b> estão funcionando<br>";
-    }
-
     static function numerico($numero){
         if (is_numeric($numero) == true){
             return true;
@@ -59,5 +52,14 @@ trait Math
         }
         $resultado = $soma / $quantidade;
         return self::arredondar($resultado);
+    }
+
+    static function ajudaMath(){
+        echo "<h3>Funções de Math</h3><br>";
+        echo '<b>numerico($numero)</b>: Retorna true se for do tipo numérico<br>';
+        echo '<b>media(...$numero)</b>: Retorna a média aritimética simples dos números<br>';
+        echo '<b>dados($min, $max)</b>: Retorna um valor aleatório entre o min e o max<br>';
+        echo '<b>arredondar($numero)</b>: Retorna o valor arredondado<br>';
+        echo '----------------------<br>';
     }
 }

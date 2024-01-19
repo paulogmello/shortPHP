@@ -53,10 +53,12 @@ Novas funções são adicionadas a cada atualização
 
 | Função | Resultado |
 |--|--|
-| ajuda | Mostra na tela todos os componentes do shortPHP |
-| dados(min, max) | Recebe o mínimo e o máximo respectivamente e retorna um número aleatório entre eles |
+| ajuda() | Mostra na tela todos os componentes do shortPHP |
+ numerico($numero) | Retorna true caso seja um número |
+| dados($min, $max) | Recebe o mínimo e o máximo respectivamente e retorna um número aleatório entre eles |
 | arredondar($n) | Recebe um número e arredonda ele|
 | arredondamento(...$n) | Recebe um array e retorna outro com todos os números arredondados |
 | media(...$n) | Recebe um array com vários números e retorna a média aritimética simples deles|
-| a | a |
+| arrayJavascript($arrayPHP, $nomeArrayJavascript) | Converte um array PHP para um array Javascript |
+|  |  |
 
