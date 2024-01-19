@@ -29,11 +29,15 @@ Exemplos:
     // Excluirá dados do banco de dados
     $meusCarros->excluir("carros", "marca = 'fiat'");
     
-    // Irá retornar um array com apenas carros da marca Fiat
-    $fiat = $meusCarros->selecionar("carros", "*" , "WHERE carros = 'fiat'");
+    // Retornará um array com apenas carros da marca Fiat
+    $fiat = $meusCarros->selecionar("carros", "*" , "carros = 'fiat'");
     
     // Retornará uma string com o valor baseado no parâmetro
-    $facebook = $meusCarros->escrever("socialmedia", "link", "WHERE titulo = 'facebook'";
+    $facebook = $meusCarros->escrever("socialmedia", "link", "titulo = 'facebook'");
+    
+    // Retornará a quantidade de linhas de acordo com o parâmetro
+    $qntCarros = $meusCarros->contar('carros');
+    $qntCarrosRenault = $meusCarros->contar("carros", "marca = 'Renault'");
     
 
 

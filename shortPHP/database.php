@@ -48,12 +48,12 @@
         return $items;
     }
 
-    public function selecionar($tabela, $row, $param)
+    public function selecionar($tabela, $row, $param = 1)
     // FAZ UMA CONSULTA NO SQL COM O TÍTULO DO EVENTO E RETORNA UM ARRAY 
     {
         try {
             $this->conn = $this->novaConexao();
-            $result = $this->buscar("SELECT $row FROM $tabela $param");
+            $result = $this->buscar("SELECT $row FROM $tabela WHERE $param");
             
             if ($result->num_rows) {
                 $items = $this->adicionarItens($result);
@@ -69,12 +69,12 @@
         }
     }
 
-    public function escrever($table, $row, $param)
+    public function escrever($table, $row, $param = 1)
     // FAZ UMA CONSULTA NO SQL E ESCREVE O RESULTADO
     {
         try {
             $this->conn = $this->novaConexao();
-            $result = $this->buscar("SELECT $row FROM $table $param");
+            $result = $this->buscar("SELECT $row FROM $table WHERE $param");
             if ($result->num_rows) {
                 $items = $this->adicionarItens($result);
             }
@@ -86,12 +86,12 @@
         }
     }
 
-    public function contar($proposito, $tabela, $param)
+    public function contar($tabela, $param = 1)
     // FAZ UMA CONTAGEM E RETORNA A QUANTIDADE DE ITENS DE ACORDO COM OS PARÂMETROS
     {
         try {
             $this->conn = $this->novaConexao();
-            $sql = "SELECT COUNT('id') as $proposito FROM $tabela $param";
+            $sql = "SELECT COUNT('id') as $tabela FROM $tabela WHERE $param";
             // echo $sql;
             $result = $this->buscar($sql);
             if ($result->num_rows) {
@@ -99,7 +99,7 @@
             }
             foreach ($items as $item) : endforeach;
             $this->encerrarConexao();
-            return $item[$proposito];
+            return $item[$tabela];
         } catch (mysqli_sql_exception) {
             // Captura a exceção e evita que o erro seja mostrado
         }
