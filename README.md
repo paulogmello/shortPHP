@@ -19,23 +19,23 @@ Exemplo:
 
 Exemplos:
 
-    //Enviará dados para o banco de dados
+    //Enviar dados para o banco de dados na tabela *carros*
     $marca = "Toyota";
     $modelo = "Corolla XEI";
     $valor = "119900";
     $placa = "ABC-123";
     $meusCarros->enviar('carros', 'marca, modelo, valor, placa', $marca, $modelo, $valor, $placa);
     
-    // Excluirá dados do banco de dados
+    // Excluir dados do banco de dados
     $meusCarros->excluir("carros", "marca = 'fiat'");
     
-    // Retornará um array com apenas carros da marca Fiat
+    // Retornar um array com apenas carros da marca Fiat
     $fiat = $meusCarros->selecionar("carros", "*" , "carros = 'fiat'");
     
-    // Retornará uma string com o valor baseado no parâmetro
+    // Retornar uma string com o valor baseado no parâmetro
     $facebook = $meusCarros->escrever("socialmedia", "link", "titulo = 'facebook'");
     
-    // Retornará a quantidade de linhas de acordo com o parâmetro
+    // Retornar a quantidade de linhas de acordo com o parâmetro
     $qntCarros = $meusCarros->contar('carros');
     $qntCarrosRenault = $meusCarros->contar("carros", "marca = 'Renault'");
     
