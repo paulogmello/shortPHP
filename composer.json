@@ -1,7 +1,7 @@
 {
     "name": "paulo-guilherme-mello/short-php",
     "description": "Uma ferramenta PHP para facilitar conexões com banco de dados + funções utilitárias",
-    "type": "framework",
+    "type": "project",
     "license": "MIT",
     "authors": [
         {
@@ -11,7 +11,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "SeuNamespace\\": "src/"
+            "shortPHP\\": "src/"
         }
     }
 }
