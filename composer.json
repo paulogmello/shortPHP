@@ -14,8 +14,6 @@
         "prefer-stable": true
     },
     "autoload": {
-        "psr-4": {
-            "shortPHP\\": "src/"
-        }
+        "files": ["shortPHP.php"]
     }
 }
