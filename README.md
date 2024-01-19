@@ -4,7 +4,7 @@ Um simples Framework PHP para agilizar conexões com PHPMyAdmin e outros utilit�
 ## Inicialização
 Para adicionar o **shortPHP** no seu projeto, dê include no arquivo **config.php** dentro do diretório do shortPHP, como no exemplo:
 
-    <?php  include  './shortPHP/config.php'; inclue o shortPHP  ?>
+    <?php  include  './shortPHP/config.php'; // inclue o shortPHP  ?>
 
 ## Banco de Dados
 Para configurar é simples, você deverá inicializar a conexão instanciando a classe **shortPHP** com os parâmetros do seu banco de dados, que são respectivamente o **Servidor**, **Banco de Dados**, **Usuário** e **Senha**.

@@ -184,4 +184,14 @@
             $this->encerrarConexao(); //Encerrar conexão
         }
     }
+
+    static function ajudaDatabase(){
+        echo "<h3>Funções de Banco de Dados</h3><br>";
+        echo '<b>enviar($tabela, $linhas, ...$param)</b>: Envia as informações com base nos parâmetros na função, sendo ela a $tabela, $linhas que serão afetadas e os dados a ser inseridos em ...$param <br>';
+        echo '<b>excluir($tabela, $param)</b>: Exclui informações com base nos parâmetros da função <br>';
+        echo '<b>selecionar($tabela, $linha, $param)</b>: Retorna um array com as informações pedidas de acordo com os parâmetros<br>';
+        echo '<b>escrever($table, $row, $param)</b>: Escreve a informação conforme as instruções pedidas<br>';
+        echo '<b>contar($tabela, $param)</b>: Retorna o valor de linhas encontradas de acordo com o parâmetro<br>';
+        echo '----------------------<br>';
+    }
 }
