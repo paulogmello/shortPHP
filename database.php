@@ -48,41 +48,39 @@
         return $items;
     }
 
-    public function selecionar($tabela, $row, $param = 1)
+    public function retornarDados($result)
+    {
+        if ($result->num_rows) {
+            $items = $this->adicionarItens($result);
+        }
+        if (isset($items)) {
+            $this->encerrarConexao();
+            return $items;
+        } else {
+            $this->encerrarConexao();
+        }
+    }
+
+    public function selecionar($tabela, $row = "*", $param = 1)
     // FAZ UMA CONSULTA NO SQL COM O TÍTULO DO EVENTO E RETORNA UM ARRAY 
     {
         try {
             $this->conn = $this->novaConexao();
             $result = $this->buscar("SELECT $row FROM $tabela WHERE $param");
-            
-            if ($result->num_rows) {
-                $items = $this->adicionarItens($result);
-            }
-            if (isset($items)) {
-                $this->encerrarConexao();
-                return $items;
-            } else {
-                $this->encerrarConexao();
-            }
-        } catch (mysqli_sql_exception) {
-            // Captura a exceção e evita que o erro seja mostrado
+            return $this->retornarDados($result);
+        } catch (mysqli_sql_exception $error) {
+            echo "Ocorreu um erro: " . $error->getMessage();
         }
     }
 
-    public function escrever($table, $row, $param = 1)
+    public function escrever($tabela, $linha, $param = 1)
     // FAZ UMA CONSULTA NO SQL E ESCREVE O RESULTADO
     {
         try {
-            $this->conn = $this->novaConexao();
-            $result = $this->buscar("SELECT $row FROM $table WHERE $param");
-            if ($result->num_rows) {
-                $items = $this->adicionarItens($result);
-            }
-            foreach ($items as $item) : endforeach;
-            $this->encerrarConexao();
-            return $item[$row];
-        } catch (mysqli_sql_exception) {
-            // Captura a exceção e evita que o erro seja mostrado
+            $item = $this->selecionar($tabela, $linha, $param);
+            return $item[0][$linha];
+        } catch (mysqli_sql_exception $error) {
+            echo "Ocorreu um erro: " . $error->getMessage();
         }
     }
 
@@ -91,64 +89,82 @@
     {
         try {
             $this->conn = $this->novaConexao();
-            $sql = "SELECT COUNT('id') as $tabela FROM $tabela WHERE $param";
-            // echo $sql;
-            $result = $this->buscar($sql);
+            $sql = "SELECT COUNT('id') as $tabela FROM $tabela WHERE $param"; //código SQL
+            $result = $this->buscar($sql); //Enviar requisição
             if ($result->num_rows) {
+                //Retorno
                 $items = $this->adicionarItens($result);
             }
-            foreach ($items as $item) : endforeach;
             $this->encerrarConexao();
-            return $item[$tabela];
-        } catch (mysqli_sql_exception) {
-            // Captura a exceção e evita que o erro seja mostrado
+            return $items[0][$tabela]; //Retornar resultado
+        } catch (mysqli_sql_exception $error) {
+            echo "Ocorreu um erro: " . $error->getMessage();
         }
     }
 
-    public function enviar($tabela, $linhas, ...$param)
+    public function enviarPrepare($sql)
+    {
+        $this->conn = $this->novaConexao();
+        $stmt = $this->conn->prepare($sql);
+
+        if (!$stmt) {
+            throw new Exception("Erro na preparação da declaração: " . $this->conn->error);
+        }
+        if (!$stmt->execute()) {
+            throw new Exception("Houve um problema durante o envio de dados.");
+        }
+        // Se chegou até aqui, a execução foi bem-sucedida
+        return true;
+    }
+
+    public function preparar($param, $sql)
+    {
+        //PREPARA O SQL PARA SER ENVIADO
+        $tipos = []; // tipos para o bind_param baseado no foreach abaixo
+        foreach ($param as $i => $items) {
+            if (filter_var($items, FILTER_VALIDATE_INT) == true) {
+                // Verificar se é INT
+                $tipos[$i] = 'i';
+            } else if (filter_var($items, FILTER_VALIDATE_FLOAT) == true) {
+                // Verificar se é FLOAT
+                $tipos[$i] = 'd';
+            } else if (is_string($items) == true) {
+                // Verificar se é STRING
+                $tipos[$i] = 's';
+            } else {
+                // Deve ser BOB;
+                $tipos[$i] = 'b';
+            }
+        }
+
+        $tipos = implode('', $tipos); //Refatora os tipos do array
+        $this->conn = $this->novaConexao();
+        $stmt = $this->conn->prepare($sql); //Preparar sql
+        if (!$stmt) {
+            throw new Exception("Erro na preparação da declaração: " . $this->conn->error);
+        }
+
+        $bindResult = $stmt->bind_param($tipos, ...$param); //RESULTADO
+
+        if (!$bindResult || !$stmt->execute()) {
+            throw new Exception("Houve um problema durante o envio de dados. Tipos: $tipos");
+        }
+    }
+
+    public function inserir($tabela, $linhas, ...$param)
     // ENVIA OS DADOS PARA O BANCO DE DADOS
     {
         try {
             //Organizar o SQL
-            $qntItems = explode(',', $linhas);
-            $qntItems = count($qntItems);
-            $values = str_repeat('?,', $qntItems - 1) . '?';
-            
+            $linhas = str_replace(" ", "", $linhas); // Tirar espaços
+            $qntItems = explode(',', $linhas); // Criar array de linhas
+            $qntItems = count($qntItems); // Descobrir quantidades
+            $values = str_repeat('?,', $qntItems - 1) . '?'; // Adicionar ? do VALUES
+
             $sql = "INSERT INTO $tabela ($linhas) VALUES ($values)"; // SQL pronto
 
-            $tipos = []; // tipos para o bind_param baseado no foreach abaixo
-            foreach ($param as $i => $items) {
-                if (filter_var($items, FILTER_VALIDATE_INT) == true) {
-                    // Verificar se é INT
-                    $tipos[$i] = 'i';
-                } else if (filter_var($items, FILTER_VALIDATE_FLOAT) == true) {
-                    // Verificar se é FLOAT
-                    $tipos[$i] = 'd';
-                } else if (is_string($items) == true) {
-                    // Verificar se é STRING
-                    $tipos[$i] = 's';
-                } else {
-                    // Deve ser BOB;
-                    $tipos[$i] = 'b';
-                }
-            }
+            $this->preparar($param, $sql); // Chamar função preparar (bind_param);
 
-            $tipos = implode('', $tipos); //Refatora os tipos do array
-
-            $this->conn = $this->novaConexao();
-            $stmt = $this->conn->prepare($sql); //Preparar sql
-
-            if (!$stmt) {
-                throw new Exception("Erro na preparação da declaração: " . $this->conn->error);
-            }
-
-            $bindResult = $stmt->bind_param($tipos, ...$param);
-
-            if (!$bindResult || !$stmt->execute()) {
-                throw new Exception("Houve um problema durante o envio de dados. Tipos: $tipos");
-            }
-
-            // Se chegou até aqui, a execução foi bem-sucedida
             return true;
         } catch (Exception $erro) {
             echo "Erro: " . $erro->getMessage();
@@ -157,24 +173,38 @@
         }
     }
 
-    public function excluir($tabela, $param)
+    public function atualizar($tabela, $params, $linhas, ...$infos)
+    {
+        //ATUALIZAR DADOS DO BANCO DE DADOS
+        try {
+            $linhas = str_replace(" ", "", $linhas); // Tirar espaços
+            $linha = explode(',', $linhas);
+            $qntItems = explode(',', $linhas); // Criar array de linhas
+            $qntItems = count($qntItems); // Descobrir quantidades
+            $relacao = []; // Array para abrigar o SQL alterado
+            for ($i = 0; $i < $qntItems; $i++) {
+                // Organizar o SQL alterado
+                $item = $linha[$i];
+                $relacao[$i] = "$item = ?";
+            }
+            $relacao = implode(',', $relacao); // Transformar em string
+            $sql = "UPDATE `$tabela` SET $relacao WHERE $params"; // SQL pronto
+
+            $this->preparar($infos, $sql); // Chamar função preparar (bind_param);
+            return true;
+        } catch (Exception $erro) {
+            echo "Erro: " . $erro->getMessage();
+        } finally {
+            $this->encerrarConexao(); //Encerrar conexão
+        }
+    }
+
+    public function deletar($tabela, $param)
     {
         // EXCLUI DADOS DO SERVIDOR COM BASE NO SQL
         try {
             $sql = "DELETE FROM $tabela WHERE $param";
-            $this->conn = $this->novaConexao();
-            $stmt = $this->conn->prepare($sql);
-
-            if (!$stmt) {
-                throw new Exception("Erro na preparação da declaração: " . $this->conn->error);
-            }
-
-            if (!$stmt->execute()) {
-                throw new Exception("Houve um problema durante a exclusão de dados.");
-            }
-
-            // Se chegou até aqui, a execução foi bem-sucedida
-            return true;
+            $this->enviarPrepare($sql);
         } catch (Exception $erro) {
             // Captura e lida com exceções
             echo "Erro: " . $erro->getMessage();
@@ -185,7 +215,104 @@
         }
     }
 
-    static function ajudaDatabase(){
+    public function criar($nome, ...$params)
+    {
+        // CRIA UMA TABELA
+        try {
+            $colunaDados = implode(',', $params);
+            $sql = "CREATE TABLE $nome ($colunaDados)";
+            $this->enviarPrepare($sql);
+        } catch (Exception $erro) {
+            // Captura e lida com exceções
+            echo "Erro: " . $erro->getMessage();
+            return false;
+        } finally {
+            // Certifique-se de fechar a conexão, independentemente do resultado
+            $this->encerrarConexao(); //Encerrar conexão
+        }
+    }
+
+    public function adicionar($nome, ...$params)
+    {
+        //ADICIONA UMA COLUNA NA TABELA
+        try {
+            $parametros = implode(', ADD ', $params);
+            $sql = "ALTER TABLE $nome ADD $parametros;";
+            $this->enviarPrepare($sql);
+        } catch (Exception $erro) {
+            // Captura e lida com exceções
+            echo "Erro: " . $erro->getMessage();
+            return false;
+        } finally {
+            // Certifique-se de fechar a conexão, independentemente do resultado
+            $this->encerrarConexao(); //Encerrar conexão
+        }
+    }
+
+    public function remover($nome, ...$params)
+    //REMOVE UMA COLUNA
+    {
+        try {
+            $parametros = implode(', DROP ', $params);
+            $sql = "ALTER TABLE $nome DROP $parametros;";
+            $this->enviarPrepare($sql);
+        } catch (Exception $erro) {
+            // Captura e lida com exceções
+            echo "Erro: " . $erro->getMessage();
+            return false;
+        } finally {
+            // Certifique-se de fechar a conexão, independentemente do resultado
+            $this->encerrarConexao(); //Encerrar conexão
+        }
+    }
+
+    public function modificar($nome, ...$params)
+    //MODIFICA UMA COLUNA 
+    {
+        try {
+            $parametros = implode(', MODIFY ', $params);
+            $sql = "ALTER TABLE $nome MODIFY $parametros;";
+            $this->enviarPrepare($sql);
+        } catch (Exception $erro) {
+            // Captura e lida com exceções
+            echo "Erro: " . $erro->getMessage();
+            return false;
+        } finally {
+            // Certifique-se de fechar a conexão, independentemente do resultado
+            $this->encerrarConexao(); //Encerrar conexão
+        }
+    }
+
+    public function criarView($nome, $tabela, $colunas, $param = 1)
+    // CRIAR UMA VIEW
+    {
+        try {
+            $sql = "CREATE VIEW $nome AS SELECT $colunas FROM $tabela WHERE $param";
+            $this->enviarPrepare($sql);
+        } catch (Exception $erro) {
+            // Captura e lida com exceções
+            echo "Erro: " . $erro->getMessage();
+            return false;
+        } finally {
+            // Certifique-se de fechar a conexão, independentemente do resultado
+            $this->encerrarConexao(); //Encerrar conexão
+        }
+    }
+
+    public function selecionarView($view, $row = "*")
+    //SELECIONAR UMA VIEW
+    {
+        try {
+            $this->conn = $this->novaConexao();
+            $result = $this->buscar("SELECT $row FROM $view");
+            return $this->retornarDados($result);
+        } catch (mysqli_sql_exception $error) {
+            echo "Ocorreu um erro: " . $error->getMessage();
+        }
+    }
+
+    static function ajudaDatabase()
+    {
         echo "<h3>Funções de Banco de Dados</h3><br>";
         echo '<b>enviar($tabela, $linhas, ...$param)</b>: Envia as informações com base nos parâmetros na função, sendo ela a $tabela, $linhas que serão afetadas e os dados a ser inseridos em ...$param <br>';
         echo '<b>excluir($tabela, $param)</b>: Exclui informações com base nos parâmetros da função <br>';

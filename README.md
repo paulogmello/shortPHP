@@ -4,8 +4,8 @@ Uma biblioteca para facilitar a conexão com o PHPMyAdmin + utilitários
 ## Planejamento
 
  - [x] Adicionar ao composer
- - [ ] Aprimorar segurança contra SQL Injection;
- - [ ] Comandos **CREATE**, **ALTER**, **DROP** e  **SHOW**;
+ - [x] Aprimorar segurança contra SQL Injection;
+ - [x] Comandos **CREATE**, **ALTER**, **DROP**;
  - [ ] Criação de **VIEW**, **FUNCTIONS** e **TRIGGERS**;
 
 ## Inicialização
@@ -27,8 +27,13 @@ Exemplo:
 
 |Comando| Resultado |
 |--|--|
-| enviar| Envia dados com base nos parâmetros SQL |
-| excluir| Exclui dados com base nos parâmetros SQL |
+| criar| Cria uma tabela |
+| adicionar| Adiciona uma coluna em uma tabela |
+| remover| Remove uma coluna em uma tabela |
+| modificar| Modifica o tipo da estrutura de uma coluna |
+| inserir| Insere linhas em uma tabela |
+| atualizar| Atualiza uma linha em uma tabela |
+| deletar| Exclui linhas em uma tabela |
 | selecionar | Retorna um array com base nos parâmetros SQL |
 | escrever| Escreve o conteúdo com base nos parâmetros SQL |
 | contar| Escreve a quantidade de linhas encontradas com base nos parâmetros SQL|
@@ -68,13 +73,13 @@ Novas funções são adicionadas a cada atualização
 
 | Função | Resultado |
 |--|--|
-| ajuda() | Mostra na tela todos os componentes do shortPHP |
- numerico($numero) | Retorna true caso seja um número |
-| dados($min, $max) | Recebe o mínimo e o máximo respectivamente e retorna um número aleatório entre eles |
-| arredondar($n) | Recebe um número e arredonda ele|
-| arredondamento(...$n) | Recebe um array e retorna outro com todos os números arredondados |
-| media(...$n) | Recebe um array com vários números e retorna a média aritimética simples deles|
-| arrayJavascript($arrayPHP, $nomeArrayJavascript) | Converte um array PHP para um array Javascript |
+| ajuda | Mostra na tela todos os componentes do shortPHP |
+ numerico | Retorna true caso seja um número |
+| dados | Recebe o mínimo e o máximo respectivamente e retorna um número aleatório entre eles |
+| arredondar | Recebe um número e arredonda ele|
+| arredondamento| Recebe um array e retorna outro com todos os números arredondados |
+| media | Recebe um array com vários números e retorna a média aritimética simples deles|
+| arrayJavascript | Converte um array PHP para um array Javascript |
 
 Veja a **lista completa** de funções utilizando o comando
 
