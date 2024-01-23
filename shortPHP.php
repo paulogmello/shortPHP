@@ -1,10 +1,11 @@
 <?php
 
 /**
- * shortPHP - Um framework simples para PHP.
+ * shortPHP - Uma biblioteca pra simplificar consultas MySQL.
  * Necessário PHP Version 8.0
  *
- * @see       https://github.com/paulogmello/shortPHP projeto no github
+ * @see       https://github.com/paulogmello/shortPHP lib no github
+ * @see       https://www.paulogmello/projects/shortPHP
  * @author    Paulo Guilherme de Mello <paulogmello.com>
  * @version   1.0
  */

@@ -8,7 +8,7 @@
     private $database;
     private $conn;
 
-    public function __construct($server,  $database, $user, $password)
+    public function __construct($database, $server = 'localhost', $user = 'root', $password = '')
     // FUNÇÃO CONSTRUTORA DA CLASSE
     {
         $this->server = $server;
@@ -61,47 +61,6 @@
         }
     }
 
-    public function selecionar($tabela, $row = "*", $param = 1)
-    // FAZ UMA CONSULTA NO SQL COM O TÍTULO DO EVENTO E RETORNA UM ARRAY 
-    {
-        try {
-            $this->conn = $this->novaConexao();
-            $result = $this->buscar("SELECT $row FROM $tabela WHERE $param");
-            return $this->retornarDados($result);
-        } catch (mysqli_sql_exception $error) {
-            echo "Ocorreu um erro: " . $error->getMessage();
-        }
-    }
-
-    public function escrever($tabela, $linha, $param = 1)
-    // FAZ UMA CONSULTA NO SQL E ESCREVE O RESULTADO
-    {
-        try {
-            $item = $this->selecionar($tabela, $linha, $param);
-            return $item[0][$linha];
-        } catch (mysqli_sql_exception $error) {
-            echo "Ocorreu um erro: " . $error->getMessage();
-        }
-    }
-
-    public function contar($tabela, $param = 1)
-    // FAZ UMA CONTAGEM E RETORNA A QUANTIDADE DE ITENS DE ACORDO COM OS PARÂMETROS
-    {
-        try {
-            $this->conn = $this->novaConexao();
-            $sql = "SELECT COUNT('id') as $tabela FROM $tabela WHERE $param"; //código SQL
-            $result = $this->buscar($sql); //Enviar requisição
-            if ($result->num_rows) {
-                //Retorno
-                $items = $this->adicionarItens($result);
-            }
-            $this->encerrarConexao();
-            return $items[0][$tabela]; //Retornar resultado
-        } catch (mysqli_sql_exception $error) {
-            echo "Ocorreu um erro: " . $error->getMessage();
-        }
-    }
-
     public function enviarPrepare($sql)
     {
         $this->conn = $this->novaConexao();
@@ -111,7 +70,7 @@
             throw new Exception("Erro na preparação da declaração: " . $this->conn->error);
         }
         if (!$stmt->execute()) {
-            throw new Exception("Houve um problema durante o envio de dados.");
+            throw new Exception("Houve um problema durante o envio de dados");
         }
         // Se chegou até aqui, a execução foi bem-sucedida
         return true;
@@ -138,8 +97,10 @@
         }
 
         $tipos = implode('', $tipos); //Refatora os tipos do array
+
         $this->conn = $this->novaConexao();
         $stmt = $this->conn->prepare($sql); //Preparar sql
+
         if (!$stmt) {
             throw new Exception("Erro na preparação da declaração: " . $this->conn->error);
         }
@@ -147,7 +108,81 @@
         $bindResult = $stmt->bind_param($tipos, ...$param); //RESULTADO
 
         if (!$bindResult || !$stmt->execute()) {
-            throw new Exception("Houve um problema durante o envio de dados. Tipos: $tipos");
+            throw new Exception("Houve um problema durante o envio de dados. Tipos: $tipos<br>$sql<br>");
+        }
+    }
+
+    public function selecionar($tabela, $row = "*", $param = "WHERE 1")
+    // FAZ UMA CONSULTA NO SQL COM O TÍTULO DO EVENTO E RETORNA UM ARRAY 
+    {
+        try {
+            $this->conn = $this->novaConexao();
+            $result = $this->buscar("SELECT $row FROM $tabela $param");
+            return $this->retornarDados($result);
+        } catch (mysqli_sql_exception $error) {
+            echo "Ocorreu um erro: " . $error->getMessage();
+        }
+    }
+
+    public function unir($tabelas, $linhas, $params = "WHERE 1", $duplicadas = false)
+    // UNE DUAS OU MAIS TABELAS ATRAVÉS DO SELECT
+    {
+        try {
+            $tabs = explode(',', $tabelas); //Transformar tabelas em array
+            $quant = count($tabs); //Quantidade de tabelas
+
+            //Verificação se terão duplicadas
+            if ($duplicadas == false) {
+                $duplicadas = "UNION";
+            } else {
+                $duplicadas = "UNION ALL";
+            }
+
+            $sql = []; //Sql parâmetro
+
+            foreach ($tabs as $i => $items) {
+                if ($i + 1 == $quant) {
+                    $sql[$i] = "SELECT $linhas FROM $items";
+                } else {
+                    $sql[$i] = "SELECT $linhas FROM $items $duplicadas";
+                }
+            }
+            $sql = implode(' ', $sql);
+            $sql = $sql . " $params";
+            $this->conn = $this->novaConexao();
+            $result = $this->buscar($sql);
+            return $this->retornarDados($result);
+        } catch (ERROR $erro) {
+            "Houve um erro durante a união das tabelas: " . $erro->getMessage();
+        }
+    }
+
+    public function escrever($tabela, $linha, $param = "WHERE 1")
+    // FAZ UMA CONSULTA NO SQL E ESCREVE O RESULTADO
+    {
+        try {
+            $item = $this->selecionar($tabela, $linha, $param);
+            return $item[0][$linha];
+        } catch (mysqli_sql_exception $error) {
+            echo "Ocorreu um erro: " . $error->getMessage();
+        }
+    }
+
+    public function contar($tabela, $param = "WHERE 1")
+    // FAZ UMA CONTAGEM E RETORNA A QUANTIDADE DE ITENS DE ACORDO COM OS PARÂMETROS
+    {
+        try {
+            $this->conn = $this->novaConexao();
+            $sql = "SELECT COUNT('id') as $tabela FROM $tabela $param"; //código SQL
+            $result = $this->buscar($sql); //Enviar requisição
+            if ($result->num_rows) {
+                //Retorno
+                $items = $this->adicionarItens($result);
+            }
+            $this->encerrarConexao();
+            return $items[0][$tabela]; //Retornar resultado
+        } catch (mysqli_sql_exception $error) {
+            echo "Ocorreu um erro: " . $error->getMessage();
         }
     }
 
@@ -188,7 +223,7 @@
                 $relacao[$i] = "$item = ?";
             }
             $relacao = implode(',', $relacao); // Transformar em string
-            $sql = "UPDATE `$tabela` SET $relacao WHERE $params"; // SQL pronto
+            $sql = "UPDATE `$tabela` SET $relacao $params"; // SQL pronto
 
             $this->preparar($infos, $sql); // Chamar função preparar (bind_param);
             return true;
@@ -203,7 +238,7 @@
     {
         // EXCLUI DADOS DO SERVIDOR COM BASE NO SQL
         try {
-            $sql = "DELETE FROM $tabela WHERE $param";
+            $sql = "DELETE FROM $tabela $param";
             $this->enviarPrepare($sql);
         } catch (Exception $erro) {
             // Captura e lida com exceções
@@ -219,17 +254,58 @@
     {
         // CRIA UMA TABELA
         try {
+            $this->conn = $this->novaConexao();
             $colunaDados = implode(',', $params);
             $sql = "CREATE TABLE $nome ($colunaDados)";
             $this->enviarPrepare($sql);
+            $this->encerrarConexao(); //Encerrar conexão
         } catch (Exception $erro) {
             // Captura e lida com exceções
             echo "Erro: " . $erro->getMessage();
             return false;
-        } finally {
-            // Certifique-se de fechar a conexão, independentemente do resultado
-            $this->encerrarConexao(); //Encerrar conexão
         }
+    }
+
+    static function criarBanco($nome, $entrar = false, $servidor = 'localhost', $usuario = 'root', $senha = '')
+    // CRIAR UM BANCO DE DADOS
+    {
+        try {
+            $sql = "CREATE DATABASE $nome";
+            $conn = new mysqli($servidor, $usuario, $senha);
+            if ($conn->connect_error) {
+                die("Houve um erro durante a conexão" . $conn->connect_error);
+            }
+            if ($conn->query($sql) === TRUE) {
+                if ($entrar == true) {
+                    return new shortPHP($nome, $servidor, $usuario, $senha);
+                } else {
+                    return "Banco de dados criado com sucesso";
+                }
+            }
+        } catch (Error $erro) {
+            echo "Houve um erro durante a criação do banco de dados: " . $erro->getMessage();
+        } finally {
+            // Fecha a conexão
+            $conn->close();
+        }
+    }
+
+    static function deletarBanco($nome, $servidor = 'localhost', $usuario = 'root', $senha = '')
+    // CRIAR UM BANCO DE DADOS
+    {
+        $sql = "DROP DATABASE $nome";
+        $conn = new mysqli($servidor, $usuario, $senha);
+        if ($conn->connect_error) {
+            die("Houve um erro durante a conexão" . $conn->connect_error);
+        }
+        if ($conn->query($sql) === TRUE) {
+            return "Banco de dados excluído com sucesso!";
+        } else {
+            return "Erro ao criar o banco de dados: " . $conn->error;
+        }
+
+        // Fecha a conexão
+        $conn->close();
     }
 
     public function adicionar($nome, ...$params)
@@ -250,7 +326,7 @@
     }
 
     public function remover($nome, ...$params)
-    //REMOVE UMA COLUNA
+    //REMOVE UMA COLUNA COM BASE NOS PARÂMETROS
     {
         try {
             $parametros = implode(', DROP ', $params);
@@ -283,11 +359,22 @@
         }
     }
 
-    public function criarView($nome, $tabela, $colunas, $param = 1)
+    public function status($tabela){
+        // Mostra informações sobre a tabela
+        try {
+            $this->conn = $this->novaConexao();
+            $result = $this->buscar("SHOW TABLE STATUS LIKE '$tabela'");
+            return $this->retornarDados($result)[0];
+        } catch (mysqli_sql_exception $error) {
+            echo "Ocorreu um erro: " . $error->getMessage();
+        }
+    }
+
+    public function criarView($nome, $tabela, $colunas, $param = "WHERE 1")
     // CRIAR UMA VIEW
     {
         try {
-            $sql = "CREATE VIEW $nome AS SELECT $colunas FROM $tabela WHERE $param";
+            $sql = "CREATE VIEW $nome AS SELECT $colunas FROM $tabela $param";
             $this->enviarPrepare($sql);
         } catch (Exception $erro) {
             // Captura e lida com exceções
@@ -299,12 +386,12 @@
         }
     }
 
-    public function selecionarView($view, $row = "*")
+    public function selecionarView($view, $row = "*", $params = 1)
     //SELECIONAR UMA VIEW
     {
         try {
             $this->conn = $this->novaConexao();
-            $result = $this->buscar("SELECT $row FROM $view");
+            $result = $this->buscar("SELECT $row FROM $view,$params");
             return $this->retornarDados($result);
         } catch (mysqli_sql_exception $error) {
             echo "Ocorreu um erro: " . $error->getMessage();
