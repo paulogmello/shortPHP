@@ -16,8 +16,6 @@ trait fArray {
         }
     }
 
-    
-
     static function arrayJavascript($arrayPHP, $nomeArrayJavascript){
         // CONVERTE UM ARRAY PHP PARA JAVASCRIPT
         echo "<script>
