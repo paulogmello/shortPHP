@@ -6,7 +6,9 @@ Uma biblioteca para facilitar a conexão com o PHPMyAdmin + utilitários
  - [x] Adicionar ao composer
  - [x] Aprimorar segurança contra SQL Injection;
  - [x] Comandos **CREATE**, **ALTER**, **DROP**;
- - [ ] Criação de **VIEW**, **FUNCTIONS** e **TRIGGERS**;
+ - [x] Criação de **VIEW**;
+ - [x] Criar e excluir banco de dados
+ - [x] STATUS
 
 ## Inicialização
 Adicione no seu composer
@@ -23,10 +25,14 @@ Ou baixe e faça o include do arquivo **shortPHP.php**
 Para configurar é simples, você deverá inicializar a conexão instanciando a classe **shortPHP** com os parâmetros do seu banco de dados, que são respectivamente o **Servidor**, **Banco de Dados**, **Usuário** e **Senha**.
 Exemplo:
 
-    $meusCarros = new shortPHP("localhost", "carros", "root", "12345");
+    $meusCarros = new shortPHP("lojaDeCarro", "localhost", "root", "12345");
 
+### Comandos disponíveis
+Utilize os comandos para criar, consultar, modificar ou deletar conforme a sua necessidade:
 |Comando| Resultado |
 |--|--|
+| criarBanco| Cria um banco de dados |
+| deletarBanco| Deleta um banco de dados |
 | criar| Cria uma tabela |
 | adicionar| Adiciona uma coluna em uma tabela |
 | remover| Remove uma coluna em uma tabela |
@@ -37,30 +43,24 @@ Exemplo:
 | selecionar | Retorna um array com base nos parâmetros SQL |
 | escrever| Escreve o conteúdo com base nos parâmetros SQL |
 | contar| Escreve a quantidade de linhas encontradas com base nos parâmetros SQL|
+| unir| Retorna os dados de 2 ou mais tabelas de acordo com parâmetros|
+| criarView| Cria uma view com base nos parâmetros |
+| selecionarView| retorna os dados de uma view |
 
-Exemplos:
 
-    //Enviar dados para o banco de dados na tabela *carros*
+Exemplo:
+
+    $meusCarros = new  shortPHP('lojaDeCarros');
+    $meusCarros->criar('carros', 'id INT AUTO_INCREMENT', 'marca TEXT', 'modelo TEXT', 'valor FLOAT', 'placa TEXT', 'PRIMARY KEY(id)');
     $marca = "Toyota";
     $modelo = "Corolla XEI";
     $valor = "119900";
     $placa = "ABC-123";
-    $meusCarros->enviar('carros', 'marca, modelo, valor, placa', $marca, $modelo, $valor, $placa);
+    $meusCarros->inserir('carros', 'marca, modelo, valor, placa',
+    $marca, $modelo, $valor, $placa);
+    $todosOsCarros = $meusCarros->selecionar('carros');
     
-    // Excluir dados do banco de dados
-    $meusCarros->excluir("carros", "marca = 'fiat'");
-    
-    // Retornar um array com apenas carros da marca Fiat
-    $fiat = $meusCarros->selecionar("carros", "*" , "carros = 'fiat'");
-    
-    // Retornar uma string com o valor baseado no parâmetro
-    $facebook = $meusCarros->escrever("socialmedia", "link", "titulo = 'facebook'");
-    
-    // Retornar a quantidade de linhas de acordo com o parâmetro
-    $qntCarros = $meusCarros->contar('carros');
-    $qntCarrosRenault = $meusCarros->contar("carros", "marca = 'Renault'");
-    
-
+    // Retorna ( [0] => Array ( [id] => 1 [marca] => Toyota [modelo] => Corolla XEI [valor] => 119900 [placa] => ABC-123 ));
 
   ## Funções Utilitárias
 O shortPHP tem várias funções para ajudar a facilitar o trabalho, para usa-las, siga o exemplo:
