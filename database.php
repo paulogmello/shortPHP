@@ -359,7 +359,8 @@
         }
     }
 
-    public function status($tabela){
+    public function status($tabela)
+    {
         // Mostra informações sobre a tabela
         try {
             $this->conn = $this->novaConexao();
@@ -393,6 +394,18 @@
             $this->conn = $this->novaConexao();
             $result = $this->buscar("SELECT $row FROM $view,$params");
             return $this->retornarDados($result);
+        } catch (mysqli_sql_exception $error) {
+            echo "Ocorreu um erro: " . $error->getMessage();
+        }
+    }
+
+    public function deletarView($view)
+    // DELETA UMA VIEW
+    {
+        try {
+            $sql = "DROP VIEW $view";
+            $this->conn = $this->novaConexao();
+            $this->enviarPrepare($sql);
         } catch (mysqli_sql_exception $error) {
             echo "Ocorreu um erro: " . $error->getMessage();
         }
