@@ -5,13 +5,16 @@ trait Files
     // Envia um arquivo para um diretório escolhido
     {
         $tipo = pathinfo($arquivo['name'], PATHINFO_EXTENSION);
-        if ($criptografar == true) {
-            $nomeArquivo = md5($arquivo['name']) . ".$tipo";
-        } else if ($nomeFinal == false) {
+        if ($nomeFinal == false) {
             $nomeArquivo = $arquivo['name'];
         } else {
             $nomeArquivo = $nomeFinal . ".$tipo";
         }
+
+        if ($criptografar == true) {
+            $nomeArquivo = md5($nomeArquivo) . ".$tipo";
+        }
+
         $tmp = $arquivo['tmp_name'];
         $arquivo = $pasta . $nomeArquivo;
         move_uploaded_file($tmp, $arquivo);
