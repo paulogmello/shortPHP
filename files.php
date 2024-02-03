@@ -41,4 +41,8 @@ trait Files
     {
         return disk_free_space($pasta);
     }
+
+    static function verExtensao($arquivo){
+        return pathinfo($arquivo, PATHINFO_EXTENSION);
+    }
 }
