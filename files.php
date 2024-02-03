@@ -10,11 +10,13 @@ trait Files
         } else {
             $nomeArquivo = $nomeFinal . ".$tipo";
         }
-
-        if ($criptografar == true) {
+        
+        if ($criptografar == true && $nomeFinal == false) {
             $nomeArquivo = md5($nomeArquivo) . ".$tipo";
+        } else if ($criptografar == true && $nomeFinal != false){
+            $nomeArquivo = $nomeFinal . md5($nomeArquivo) . ".$tipo";
         }
-
+        
         $tmp = $arquivo['tmp_name'];
         $arquivo = $pasta . $nomeArquivo;
         move_uploaded_file($tmp, $arquivo);
