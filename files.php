@@ -1,17 +1,19 @@
 <?php
 trait Files
 {
-    static function enviarArquivo($arquivo, $pasta, $criptografar = false)
+    static function enviarArquivo($arquivo, $pasta, $nomeFinal = false, $criptografar = false)
     // Envia um arquivo para um diretório escolhido
     {
         $tipo = pathinfo($arquivo['name'], PATHINFO_EXTENSION);
         if ($criptografar == true) {
             $nomeArquivo = md5($arquivo['name']) . ".$tipo";
-        } else {
+        } else if ($nomeFinal == false) {
             $nomeArquivo = $arquivo['name'];
+        } else {
+            $nomeArquivo = $nomeFinal . ".$tipo";
         }
+        $tmp = $arquivo['tmp_name'];
         $arquivo = $pasta . $nomeArquivo;
-        $tmp = $_FILES['imagem']['tmp_name'];
         move_uploaded_file($tmp, $arquivo);
         return true;
     }
