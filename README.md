@@ -9,6 +9,7 @@ Uma biblioteca para facilitar a conexão com o PHPMyAdmin + utilitários
  - [x] Criação de **VIEW**;
  - [x] Criar e excluir banco de dados
  - [x] STATUS
+ - [ ] Envio de Arquivos
 
 ## Inicialização
 Adicione no seu composer
