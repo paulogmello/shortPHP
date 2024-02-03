@@ -15,6 +15,7 @@ require_once 'basic.php';
 require_once 'database.php';
 require_once 'math.php';
 require_once 'array.php';
+require_once 'files.php';
 
 /** Classe principal do shortPHP
  *  Não faça nenhuma alteração neste arquivo;
@@ -25,8 +26,9 @@ class shortPHP
 {
     use Basic; // Funções Gerais
     use Math; // Funções de Matemática
-    use Database; //Funções de Banco de dados
     use fArray; // Funções de Array;
+    use Database; //Funções de Banco de dados
+    use Files; //Funções de envio de arquivos
 
     static function ajuda()
     // Função para ajudar a entender as funções

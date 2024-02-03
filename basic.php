@@ -49,11 +49,6 @@ trait Basic
         return date('d/m/Y');
     }
 
-    static function converterData($data){
-        $data = explode('-', $data);
-        return $data[2] . "/" . $data[1] . "/" . $data[0];
-    }
-
     static function cumprimentar()
     {
         // Cumprimenta de acordo com o horário
