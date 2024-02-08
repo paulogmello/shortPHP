@@ -49,6 +49,11 @@ trait Basic
         return date('d/m/Y');
     }
 
+    static function dataSQL($timezone = "America/Sao_Paulo"){
+        date_default_timezone_set($timezone);
+        return date('Y-m-d');
+    }
+
     static function converterData($data){
         $data = explode("-", $data);
         $ano = $data[0]; $mes = $data[1]; $dia = $data[2];
