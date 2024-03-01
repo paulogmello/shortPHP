@@ -387,18 +387,6 @@
         }
     }
 
-    public function selecionarView($view, $row = "*", $params = 1)
-    //SELECIONAR UMA VIEW
-    {
-        try {
-            $this->conn = $this->novaConexao();
-            $result = $this->buscar("SELECT $row FROM $view,$params");
-            return $this->retornarDados($result);
-        } catch (mysqli_sql_exception $error) {
-            echo "Ocorreu um erro: " . $error->getMessage();
-        }
-    }
-
     public function deletarView($view)
     // DELETA UMA VIEW
     {

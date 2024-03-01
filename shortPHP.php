@@ -16,6 +16,7 @@ require_once 'database.php';
 require_once 'math.php';
 require_once 'array.php';
 require_once 'files.php';
+require_once 'mail.php';
 
 /** Classe principal do shortPHP
  *  Não faça nenhuma alteração neste arquivo;
@@ -29,6 +30,7 @@ class shortPHP
     use fArray; // Funções de Array;
     use Database; //Funções de Banco de dados
     use Files; //Funções de envio de arquivos
+    use Mail; //Funções de envio de e-mails
 
     static function ajuda()
     // Função para ajudar a entender as funções
@@ -38,5 +40,10 @@ class shortPHP
         echo shortPHP::ajudaDatabase();
         echo shortPHP::ajudaArray();
         echo shortPHP::ajudaMath();
+    }
+
+    static function versao()
+    {
+        print_r("shortPHP 1.0");
     }
 }

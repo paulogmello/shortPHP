@@ -10,16 +10,26 @@ trait Files
         } else {
             $nomeArquivo = $nomeFinal . ".$tipo";
         }
-        
+
         if ($criptografar == true && $nomeFinal == false) {
             $nomeArquivo = md5($nomeArquivo) . ".$tipo";
-        } else if ($criptografar == true && $nomeFinal != false){
+        } else if ($criptografar == true && $nomeFinal != false) {
             $nomeArquivo = $nomeFinal . md5($nomeArquivo) . ".$tipo";
         }
-        
+
         $tmp = $arquivo['tmp_name'];
         $arquivo = $pasta . $nomeArquivo;
-        move_uploaded_file($tmp, $arquivo);
+        if (!is_dir($pasta)) {
+            if (!mkdir($pasta, 0777, true)) {
+                return false;
+            }
+        }
+
+        if (!move_uploaded_file($tmp, $arquivo)) {
+            // Falha ao mover o arquivo
+            return false;
+        }
+
         return true;
     }
 
@@ -49,7 +59,8 @@ trait Files
         return disk_free_space($pasta);
     }
 
-    static function verExtensao($arquivo){
+    static function verExtensao($arquivo)
+    {
         return pathinfo($arquivo, PATHINFO_EXTENSION);
     }
 }
