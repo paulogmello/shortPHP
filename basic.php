@@ -1,4 +1,5 @@
 <?php
+namespace ShortPHP;
 trait Basic
 {
     static function verHora($timezone = "America/Sao_Paulo")

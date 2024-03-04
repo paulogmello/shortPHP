@@ -1,6 +1,5 @@
 <?php
-// FUNÇÕES PARA ARRAYS
-
+namespace ShortPHP;
 trait fArray
 {
 
@@ -10,10 +9,10 @@ trait fArray
         try {
             $novoArray = [];
             foreach ($array as $i => $items) {
-                $novoArray[$i] = shortPHP::arredondar($items);
+                $novoArray[$i] = \shortPHP::arredondar($items);
             }
             return $novoArray;
-        } catch (Error $erro) {
+        } catch (\Error $erro) {
             echo "Erro: " . $erro->getMessage();
         }
     }
@@ -56,13 +55,5 @@ trait fArray
             $bulk[$items] = $this->selecionar($items, $linhasSelecionadas, $paramSelecionadas);
         }
         return $bulk;
-    }
-
-    static function ajudaArray()
-    {
-        echo "<h3>Funções de Array</h3><br>";
-        echo '<b>arredondamento(...$array)</b>: Arredonda vários números<br>';
-        echo '<b>arrayJavascript($arrayPHP, $nomeArrayJavascript)</b>: Transforma um array PHP em Javascript<br>';
-        echo '----------------------<br>';
     }
 }

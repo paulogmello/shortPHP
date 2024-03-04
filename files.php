@@ -1,6 +1,34 @@
 <?php
+namespace ShortPHP;
 trait Files
 {
+    static function lerArquivo($arquivo){
+    // LÊ O ARQUIVO O RETORNA
+        return file_get_contents($arquivo);
+    }
+
+    static function escreverArquivo($arquivo, $conteudo, $sobrescrever = false)
+    // ESCREVE OU CRIA UM ARQUIVO NOVO COM O CONTEÚDO ADICIONADO
+    {
+        try {
+            $part = explode('/', $arquivo);
+            $dir = implode('/', $part);
+            if (!is_dir($dir)) {
+                if (!mkdir($dir, 0777, true)) {
+                    return false;
+                }
+            }
+            if ($sobrescrever == false) {
+                file_put_contents($arquivo, $conteudo, FILE_APPEND | LOCK_EX);
+            } else {
+                file_put_contents($arquivo, $conteudo, LOCK_EX);
+            }
+            return true;
+        } catch (\ERROR $e) {
+            echo "Houve um erro ao escrever o arquivo: " . $e;
+        }
+    }
+
     static function enviarArquivo($arquivo, $pasta, $nomeFinal = false, $criptografar = false)
     // Envia um arquivo para um diretório escolhido
     {
@@ -44,17 +72,12 @@ trait Files
             }
             unlink($pasta . '/' . $nomeArquivo);
             return true;
-        } catch (Error $e) {
+        } catch (\Error $e) {
             echo "Houve um erro na exclusão do arquivo: $e";
         }
     }
 
     static function espacoLivre($pasta = "C:/")
-    {
-        return disk_free_space($pasta);
-    }
-
-    static function Livre($pasta = "C:/")
     {
         return disk_free_space($pasta);
     }

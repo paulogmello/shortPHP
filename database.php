@@ -1,4 +1,8 @@
-<?php trait Database
+<?php
+
+namespace ShortPHP;
+
+trait Database
 {
 
     //BANCO DE DADOS
@@ -20,7 +24,7 @@
     private function novaConexao()
     // ABRE UMA NOVA CONEXÃO COM O BANCO DE DADOS
     {
-        $this->conn = new mysqli($this->server, $this->user, $this->password, $this->database);
+        $this->conn = new \mysqli($this->server, $this->user, $this->password, $this->database);
         if ($this->conn->error) {
             die("Erro na Conexão");
         }
@@ -67,10 +71,10 @@
         $stmt = $this->conn->prepare($sql);
 
         if (!$stmt) {
-            throw new Exception("Erro na preparação da declaração: " . $this->conn->error);
+            throw new \Exception("Erro na preparação da declaração: " . $this->conn->error);
         }
         if (!$stmt->execute()) {
-            throw new Exception("Houve um problema durante o envio de dados");
+            throw new \Exception("Houve um problema durante o envio de dados");
         }
         // Se chegou até aqui, a execução foi bem-sucedida
         return true;
@@ -102,13 +106,13 @@
         $stmt = $this->conn->prepare($sql); //Preparar sql
 
         if (!$stmt) {
-            throw new Exception("Erro na preparação da declaração: " . $this->conn->error);
+            throw new \Exception("Erro na preparação da declaração: " . $this->conn->error);
         }
 
         $bindResult = $stmt->bind_param($tipos, ...$param); //RESULTADO
 
         if (!$bindResult || !$stmt->execute()) {
-            throw new Exception("Houve um problema durante o envio de dados. Tipos: $tipos<br>$sql<br>");
+            throw new \Exception("Houve um problema durante o envio de dados. Tipos: $tipos<br>$sql<br>");
         }
     }
 
@@ -119,7 +123,7 @@
             $this->conn = $this->novaConexao();
             $result = $this->buscar("SELECT $row FROM $tabela $param");
             return $this->retornarDados($result);
-        } catch (mysqli_sql_exception $error) {
+        } catch (\mysqli_sql_exception $error) {
             echo "Ocorreu um erro: " . $error->getMessage();
         }
     }
@@ -152,7 +156,7 @@
             $this->conn = $this->novaConexao();
             $result = $this->buscar($sql);
             return $this->retornarDados($result);
-        } catch (ERROR $erro) {
+        } catch (\ERROR $erro) {
             "Houve um erro durante a união das tabelas: " . $erro->getMessage();
         }
     }
@@ -163,7 +167,7 @@
         try {
             $item = $this->selecionar($tabela, $linha, $param);
             return $item[0][$linha];
-        } catch (mysqli_sql_exception $error) {
+        } catch (\mysqli_sql_exception $error) {
             echo "Ocorreu um erro: " . $error->getMessage();
         }
     }
@@ -181,7 +185,7 @@
             }
             $this->encerrarConexao();
             return $items[0][$tabela]; //Retornar resultado
-        } catch (mysqli_sql_exception $error) {
+        } catch (\mysqli_sql_exception $error) {
             echo "Ocorreu um erro: " . $error->getMessage();
         }
     }
@@ -201,7 +205,7 @@
             $this->preparar($param, $sql); // Chamar função preparar (bind_param);
 
             return true;
-        } catch (Exception $erro) {
+        } catch (\Exception $erro) {
             echo "Erro: " . $erro->getMessage();
         } finally {
             $this->encerrarConexao(); //Encerrar conexão
@@ -227,7 +231,7 @@
 
             $this->preparar($infos, $sql); // Chamar função preparar (bind_param);
             return true;
-        } catch (Exception $erro) {
+        } catch (\Exception $erro) {
             echo "Erro: " . $erro->getMessage();
         } finally {
             $this->encerrarConexao(); //Encerrar conexão
@@ -240,7 +244,7 @@
         try {
             $sql = "DELETE FROM $tabela $param";
             $this->enviarPrepare($sql);
-        } catch (Exception $erro) {
+        } catch (\Exception $erro) {
             // Captura e lida com exceções
             echo "Erro: " . $erro->getMessage();
             return false;
@@ -259,7 +263,7 @@
             $sql = "CREATE TABLE $nome ($colunaDados)";
             $this->enviarPrepare($sql);
             $this->encerrarConexao(); //Encerrar conexão
-        } catch (Exception $erro) {
+        } catch (\Exception $erro) {
             // Captura e lida com exceções
             echo "Erro: " . $erro->getMessage();
             return false;
@@ -271,18 +275,18 @@
     {
         try {
             $sql = "CREATE DATABASE $nome";
-            $conn = new mysqli($servidor, $usuario, $senha);
+            $conn = new \mysqli($servidor, $usuario, $senha);
             if ($conn->connect_error) {
                 die("Houve um erro durante a conexão" . $conn->connect_error);
             }
             if ($conn->query($sql) === TRUE) {
                 if ($entrar == true) {
-                    return new shortPHP($nome, $servidor, $usuario, $senha);
+                    return new \shortPHP($nome, $servidor, $usuario, $senha);
                 } else {
                     return "Banco de dados criado com sucesso";
                 }
             }
-        } catch (Error $erro) {
+        } catch (\Error $erro) {
             echo "Houve um erro durante a criação do banco de dados: " . $erro->getMessage();
         } finally {
             // Fecha a conexão
@@ -294,7 +298,7 @@
     // CRIAR UM BANCO DE DADOS
     {
         $sql = "DROP DATABASE $nome";
-        $conn = new mysqli($servidor, $usuario, $senha);
+        $conn = new \mysqli($servidor, $usuario, $senha);
         if ($conn->connect_error) {
             die("Houve um erro durante a conexão" . $conn->connect_error);
         }
@@ -315,7 +319,7 @@
             $parametros = implode(', ADD ', $params);
             $sql = "ALTER TABLE $nome ADD $parametros;";
             $this->enviarPrepare($sql);
-        } catch (Exception $erro) {
+        } catch (\Exception $erro) {
             // Captura e lida com exceções
             echo "Erro: " . $erro->getMessage();
             return false;
@@ -332,7 +336,7 @@
             $parametros = implode(', DROP ', $params);
             $sql = "ALTER TABLE $nome DROP $parametros;";
             $this->enviarPrepare($sql);
-        } catch (Exception $erro) {
+        } catch (\Exception $erro) {
             // Captura e lida com exceções
             echo "Erro: " . $erro->getMessage();
             return false;
@@ -349,7 +353,7 @@
             $parametros = implode(', MODIFY ', $params);
             $sql = "ALTER TABLE $nome MODIFY $parametros;";
             $this->enviarPrepare($sql);
-        } catch (Exception $erro) {
+        } catch (\Exception $erro) {
             // Captura e lida com exceções
             echo "Erro: " . $erro->getMessage();
             return false;
@@ -366,7 +370,7 @@
             $this->conn = $this->novaConexao();
             $result = $this->buscar("SHOW TABLE STATUS LIKE '$tabela'");
             return $this->retornarDados($result)[0];
-        } catch (mysqli_sql_exception $error) {
+        } catch (\mysqli_sql_exception $error) {
             echo "Ocorreu um erro: " . $error->getMessage();
         }
     }
@@ -377,7 +381,7 @@
         try {
             $sql = "CREATE VIEW $nome AS SELECT $colunas FROM $tabela $param";
             $this->enviarPrepare($sql);
-        } catch (Exception $erro) {
+        } catch (\Exception $erro) {
             // Captura e lida com exceções
             echo "Erro: " . $erro->getMessage();
             return false;
@@ -394,19 +398,8 @@
             $sql = "DROP VIEW $view";
             $this->conn = $this->novaConexao();
             $this->enviarPrepare($sql);
-        } catch (mysqli_sql_exception $error) {
+        } catch (\mysqli_sql_exception $error) {
             echo "Ocorreu um erro: " . $error->getMessage();
         }
-    }
-
-    static function ajudaDatabase()
-    {
-        echo "<h3>Funções de Banco de Dados</h3><br>";
-        echo '<b>enviar($tabela, $linhas, ...$param)</b>: Envia as informações com base nos parâmetros na função, sendo ela a $tabela, $linhas que serão afetadas e os dados a ser inseridos em ...$param <br>';
-        echo '<b>excluir($tabela, $param)</b>: Exclui informações com base nos parâmetros da função <br>';
-        echo '<b>selecionar($tabela, $linha, $param)</b>: Retorna um array com as informações pedidas de acordo com os parâmetros<br>';
-        echo '<b>escrever($table, $row, $param)</b>: Escreve a informação conforme as instruções pedidas<br>';
-        echo '<b>contar($tabela, $param)</b>: Retorna o valor de linhas encontradas de acordo com o parâmetro<br>';
-        echo '----------------------<br>';
     }
 }

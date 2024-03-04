@@ -1,4 +1,5 @@
 <?php
+namespace ShortPHP;
 trait Mail
 {
     static function enviarMensagem($meuEmail, $destino, $assunto, $mensagem)

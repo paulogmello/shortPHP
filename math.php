@@ -1,7 +1,10 @@
 <?php
 
-// FUNÇÕES ARITMÉTICAS
+namespace ShortPHP;
+
 trait Math
+
+// FUNÇÕES ARITMÉTICAS
 {
     static function numerico($numero)
     {
@@ -26,8 +29,8 @@ trait Math
     {
         // SUBTRAI TODOS OS ITENS DENTRO DO ARRAY
         $valor = NULL;
-        foreach($numeros as $items){
-            if($valor == NULL){
+        foreach ($numeros as $items) {
+            if ($valor == NULL) {
                 $valor = $items;
             } else {
                 $valor -= $items;
@@ -36,11 +39,12 @@ trait Math
         return $valor;
     }
 
-    static function multiplicar(...$numeros){
+    static function multiplicar(...$numeros)
+    {
         // MULTIPLICA TODOS OS ITENS DENTRO DO ARRAY
         $valor = NULL;
-        foreach($numeros as $items){
-            if($valor == NULL){
+        foreach ($numeros as $items) {
+            if ($valor == NULL) {
                 $valor = $items;
             } else {
                 $valor *= $items;
@@ -49,11 +53,12 @@ trait Math
         return $valor;
     }
 
-    static function dividir(...$numeros){
+    static function dividir(...$numeros)
+    {
         // DIVIDE TODOS OS ITENS DENTRO DO ARRAY
         $valor = NULL;
-        foreach($numeros as $items){
-            if($valor == NULL){
+        foreach ($numeros as $items) {
+            if ($valor == NULL) {
                 $valor = $items;
             } else {
                 $valor /= $items;
@@ -88,7 +93,7 @@ trait Math
             } else if (is_numeric($numero) == true) {
                 return $numero;
             }
-        } catch (Error $erro) {
+        } catch (\Error $erro) {
             echo $erro->getMessage();
         }
     }
@@ -105,13 +110,20 @@ trait Math
         return self::arredondar($resultado);
     }
 
-    static function ajudaMath()
+    static function decimais($valor, $casas = 2)
     {
-        echo "<h3>Funções de Math</h3><br>";
-        echo '<b>numerico($numero)</b>: Retorna true se for do tipo numérico<br>';
-        echo '<b>media(...$numero)</b>: Retorna a média aritimética simples dos números<br>';
-        echo '<b>dados($min, $max)</b>: Retorna um valor aleatório entre o min e o max<br>';
-        echo '<b>arredondar($numero)</b>: Retorna o valor arredondado<br>';
-        echo '----------------------<br>';
+        return number_format($valor, $casas, '.', '');
+    }
+
+    static function bytesParaMb($valor)
+    {
+        $valor = ($valor / 1024) / 1024;
+        return \shortPHP::decimais($valor, 2) . " MB";
+    }
+    static function bytesParaGb($valor)
+    {
+        $valor = ($valor / 1024) / 1024;
+        $valor = $valor / 1024;
+        return \shortPHP::decimais($valor, 2) . " GB";
     }
 }

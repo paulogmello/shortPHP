@@ -11,12 +11,13 @@
  */
 
 // Importar arquivos de funções
+require_once 'array.php';
 require_once 'basic.php';
 require_once 'database.php';
-require_once 'math.php';
-require_once 'array.php';
 require_once 'files.php';
 require_once 'mail.php';
+require_once 'math.php';
+require_once 'sessions.php';
 
 /** Classe principal do shortPHP
  *  Não faça nenhuma alteração neste arquivo;
@@ -25,25 +26,16 @@ require_once 'mail.php';
 
 class shortPHP
 {
-    use Basic; // Funções Gerais
-    use Math; // Funções de Matemática
-    use fArray; // Funções de Array;
-    use Database; //Funções de Banco de dados
-    use Files; //Funções de envio de arquivos
-    use Mail; //Funções de envio de e-mails
-
-    static function ajuda()
-    // Função para ajudar a entender as funções
-    {
-        echo "Componentes do <b>ShortPHP</b>:<br>";
-        echo '----------------------<br>';
-        echo shortPHP::ajudaDatabase();
-        echo shortPHP::ajudaArray();
-        echo shortPHP::ajudaMath();
-    }
+    use ShortPHP\Basic; // Funções Gerais
+    use ShortPHP\Database; //Funções de Banco de dados
+    use ShortPHP\fArray; // Funções de Array;
+    use ShortPHP\Files; //Funções de envio de arquivos
+    use ShortPHP\Mail; //Funções de envio de e-mails
+    use ShortPHP\Math; // Funções de Matemática
+    use ShortPHP\Sessions; //Funções e configurações de sessões
 
     static function versao()
     {
-        print_r("shortPHP 1.0");
+        echo ("shortPHP 1.3");
     }
 }
