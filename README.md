@@ -1,4 +1,4 @@
-# shortPHP 1.0 (Em desenvolvimento)
+# shortPHP 1.3 (Em desenvolvimento)
 Uma biblioteca para facilitar a conexão com o PHPMyAdmin + utilitários
 
 ## Planejamento
@@ -9,7 +9,9 @@ Uma biblioteca para facilitar a conexão com o PHPMyAdmin + utilitários
  - [x] Criação de **VIEW**;
  - [x] Criar e excluir banco de dados
  - [x] STATUS
- - [ ] Envio de Arquivos
+ - [x] Envio de Arquivos
+ - [x] Sessões
+
 
 ## Inicialização
 Adicione no seu composer
