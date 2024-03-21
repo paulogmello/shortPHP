@@ -1,7 +1,7 @@
 <?php
 
 /**
- * shortPHP - Uma biblioteca pra simplificar consultas MySQL.
+ * shortPHP - Uma biblioteca pra simplificar consultas SQL, envio de arquivos e muito mais!.
  * Necessário PHP Version 8.0
  *
  * @see       https://github.com/paulogmello/shortPHP lib no github

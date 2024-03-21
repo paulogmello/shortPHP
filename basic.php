@@ -1,5 +1,7 @@
 <?php
+
 namespace ShortPHP;
+
 trait Basic
 {
     static function verHora($timezone = "America/Sao_Paulo")
@@ -50,26 +52,40 @@ trait Basic
         return date('d/m/Y');
     }
 
-    static function dataSQL($timezone = "America/Sao_Paulo"){
+    static function dataSQL($timezone = "America/Sao_Paulo")
+    {
         date_default_timezone_set($timezone);
         return date('Y-m-d');
     }
 
-    static function converterData($data){
+    static function converterData($data)
+    {
         $data = explode("-", $data);
-        $ano = $data[0]; $mes = $data[1]; $dia = $data[2];
+        $ano = $data[0];
+        $mes = $data[1];
+        $dia = $data[2];
         return "$dia/$mes/$ano";
     }
 
-    static function cumprimentar()
+    static function cumprimentar($language = NULL)
     {
         // Cumprimenta de acordo com o horário
         $hora = self::verHora();
         if ($hora >= 06 && $hora < 12) {
-            return "Bom-Dia";
+            if ($language == 'english') {
+                return "Good-Morning";
+            } else {
+                return "Bom-Dia";
+            }
         } else if ($hora >= 12 && $hora < 18) {
+            if($language == 'english'){
+                return "Good-Afternoon";
+            }
             return "Boa-Tarde";
         } else {
+            if($language == "english"){
+                return "Good-Evening";
+            }
             return "Boa-Noite";
         }
     }
