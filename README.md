@@ -18,11 +18,6 @@ Adicione no seu composer
 
     "require":  {  "paulogmello/shortPHP":  "dev-main"  }
 
-Ou baixe e faça o include do arquivo **shortPHP.php**
-
-    require_once "./shortPHP.php";
-
-
 
 ## Banco de Dados
 Para configurar é simples, você deverá inicializar a conexão instanciando a classe **shortPHP** com os parâmetros do seu banco de dados, que são respectivamente o **Servidor**, **Banco de Dados**, **Usuário** e **Senha**.
@@ -49,7 +44,13 @@ Utilize os comandos para criar, consultar, modificar ou deletar conforme a sua n
 | unir| Retorna os dados de 2 ou mais tabelas de acordo com parâmetros|
 | criarView| Cria uma view com base nos parâmetros |
 | selecionarView| retorna os dados de uma view |
+| enviarArquivo| Envia um arquivo para um diretório |
+| escreverArquivo| Escreve um novo arquivo com base nos parâmetros |
+| deletarArquivo| Deleta um arquivo |
+| criarDiretorio| Cria uma nova pasta |
+| converter| Converte a extensão de um arquivo (requer Imagick) |
 
+Para mais exemplos de funções, verifique a documentação
 
 Exemplo:
 
@@ -83,8 +84,3 @@ Novas funções são adicionadas a cada atualização
 | arredondamento| Recebe um array e retorna outro com todos os números arredondados |
 | media | Recebe um array com vários números e retorna a média aritimética simples deles|
 | arrayJavascript | Converte um array PHP para um array Javascript |
-
-Veja a **lista completa** de funções utilizando o comando
-
-    shortPHP::ajuda();
-
