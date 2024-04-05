@@ -54,14 +54,18 @@ trait Database
 
     public function retornarDados($result)
     {
-        if ($result->num_rows) {
-            $items = $this->adicionarItens($result);
-        }
-        if (isset($items)) {
-            $this->encerrarConexao();
-            return $items;
+        if ($result != false) {
+            if ($result->num_rows) {
+                $items = $this->adicionarItens($result);
+            }
+            if (isset($items)) {
+                $this->encerrarConexao();
+                return $items;
+            } else {
+                $this->encerrarConexao();
+            }
         } else {
-            $this->encerrarConexao();
+            $result = null;
         }
     }
 
@@ -166,7 +170,11 @@ trait Database
     {
         try {
             $item = $this->selecionar($tabela, $linha, $param);
-            return $item[0][$linha];
+            if ($item != false) {
+                return $item[0][$linha];
+            } else {
+                return null;
+            }
         } catch (\mysqli_sql_exception $error) {
             echo "Ocorreu um erro: " . $error->getMessage();
         }
@@ -179,12 +187,17 @@ trait Database
             $this->conn = $this->novaConexao();
             $sql = "SELECT COUNT('id') as $tabela FROM $tabela $param"; //código SQL
             $result = $this->buscar($sql); //Enviar requisição
-            if ($result->num_rows) {
-                //Retorno
-                $items = $this->adicionarItens($result);
+            if ($result != false) {
+                if ($result->num_rows) {
+                    //Retorno
+                    $items = $this->adicionarItens($result);
+                    $this->encerrarConexao();
+                    return $items[0][$tabela]; //Retornar resultado
+                } else {
+                    $this->encerrarConexao();
+                    return null;
+                }
             }
-            $this->encerrarConexao();
-            return $items[0][$tabela]; //Retornar resultado
         } catch (\mysqli_sql_exception $error) {
             echo "Ocorreu um erro: " . $error->getMessage();
         }
