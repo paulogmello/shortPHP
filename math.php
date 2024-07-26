@@ -6,7 +6,7 @@ trait Math
 
 // FUNÇÕES ARITMÉTICAS
 {
-    static function numerico($numero)
+    static function numeric($numero)
     {
         if (is_numeric($numero) == true) {
             return true;
@@ -15,7 +15,7 @@ trait Math
         }
     }
 
-    static function somar(...$numeros)
+    static function sum(...$numeros)
     {
         // SOMA TODOS OS ITENS DENTRO DO ARRAY
         $valor = 0;
@@ -25,7 +25,7 @@ trait Math
         return $valor;
     }
 
-    static function subtrair(...$numeros)
+    static function sub(...$numeros)
     {
         // SUBTRAI TODOS OS ITENS DENTRO DO ARRAY
         $valor = NULL;
@@ -39,7 +39,7 @@ trait Math
         return $valor;
     }
 
-    static function multiplicar(...$numeros)
+    static function multiply(...$numeros)
     {
         // MULTIPLICA TODOS OS ITENS DENTRO DO ARRAY
         $valor = NULL;
@@ -53,7 +53,7 @@ trait Math
         return $valor;
     }
 
-    static function dividir(...$numeros)
+    static function divide(...$numeros)
     {
         // DIVIDE TODOS OS ITENS DENTRO DO ARRAY
         $valor = NULL;
@@ -67,17 +67,17 @@ trait Math
         return $valor;
     }
 
-    static function dados($min, $max)
+    static function dices($min, $max)
     {
         // RETORNA UM NÚMERO ALEATÓRIO ENTRE OS PARÂMETROS APRESENTADOS
         if (self::numerico($min) == true && self::numerico($max) == true) {
             return rand($min, $max);
         } else {
-            echo "Não é um número";
+            echo "Not a number";
         }
     }
 
-    static function arredondar($numero)
+    static function round($numero)
     {
         // ARREDONDA O NÚMERO
         try {

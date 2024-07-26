@@ -1,15 +1,15 @@
 <?php
+
 /**
- * shortPHP - Uma biblioteca pra simplificar consultas SQL, envio de arquivos e muito mais!.
- * Necessário PHP Version 8.0
+ * shortPHP - A library to improve your work with PHP, making SQL connections easily and faster, simplifying the process and speed up your project
  *
- * @see       https://github.com/paulogmello/shortPHP lib no github
+ * @see       https://github.com/paulogmello/shortPHP lib in github
  * @see       https://www.paulogmello/projects/shortPHP
  * @author    Paulo Guilherme de Mello <paulogmello.com>
- * @version   1.0
+ * @version   1.5
  */
 
-// Importar arquivos de funções
+// Import files
 require_once 'array.php';
 require_once 'basic.php';
 require_once 'database.php';
@@ -18,23 +18,22 @@ require_once 'mail.php';
 require_once 'math.php';
 require_once 'sessions.php';
 
-/** Classe principal do shortPHP
- *  Não faça nenhuma alteração neste arquivo;
- *  Um manual composto de todas as funções estará disponível no github
+/** Main class of the library
+ *  Don't change anything if you don't know how;
  */
 
 class shortPHP
 {
-    use ShortPHP\Basic; // Funções Gerais
-    use ShortPHP\Database; //Funções de Banco de dados
-    use ShortPHP\fArray; // Funções de Array;
-    use ShortPHP\Files; //Funções de envio de arquivos
-    use ShortPHP\Mail; //Funções de envio de e-mails
-    use ShortPHP\Math; // Funções de Matemática
-    use ShortPHP\Sessions; //Funções e configurações de sessões
+    use ShortPHP\Basic; // Basic functions
+    use ShortPHP\Database; // Database functions
+    use ShortPHP\fArray; // Arrays functions;
+    use ShortPHP\Files; // File management functions
+    use ShortPHP\Mail; // Mails functions
+    use ShortPHP\Math; // Math functions
+    use ShortPHP\Sessions; // Sessions functions
 
-    static function versao()
+    static function version()
     {
-        echo ("shortPHP 1.3");
+        echo ("shortPHP 1.5");
     }
 }

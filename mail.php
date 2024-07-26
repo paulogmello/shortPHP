@@ -2,7 +2,7 @@
 namespace ShortPHP;
 trait Mail
 {
-    static function enviarMensagem($meuEmail, $destino, $assunto, $mensagem)
+    static function sendMessage($meuEmail, $destino, $assunto, $mensagem)
     {
         if ($meuEmail != "") {
             $header = array(

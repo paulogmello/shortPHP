@@ -4,48 +4,48 @@ namespace ShortPHP;
 
 trait Basic
 {
-    static function verHora($timezone = "America/Sao_Paulo")
+    static function seeHour($timezone = "America/Sao_Paulo")
     {
         // Retorna HORA atual
         date_default_timezone_set($timezone);
         return date('H');
     }
 
-    static function verMinutos($timezone = "America/Sao_Paulo")
+    static function seeMinutes($timezone = "America/Sao_Paulo")
     {
         // Retorna Minuto atual
         date_default_timezone_set($timezone);
         return date('i');
     }
-    static function verHoraMinutos($timezone = "America/Sao_Paulo")
+    static function seeHourMinutes($timezone = "America/Sao_Paulo")
     {
         // Retorna o horário atual
         date_default_timezone_set($timezone);
         return date('H:i');
     }
 
-    static function verDia($timezone = "America/Sao_Paulo")
+    static function seeDay($timezone = "America/Sao_Paulo")
     {
         // Retorna o horário atual
         date_default_timezone_set($timezone);
         return date('d');
     }
 
-    static function verMes($timezone = "America/Sao_Paulo")
+    static function seeMonth($timezone = "America/Sao_Paulo")
     {
         // Retorna o horário atual
         date_default_timezone_set($timezone);
         return date('m');
     }
 
-    static function verAno($timezone = "America/Sao_Paulo")
+    static function seeYear($timezone = "America/Sao_Paulo")
     {
         // Retorna o horário atual
         date_default_timezone_set($timezone);
         return date('Y');
     }
 
-    static function verData($timezone = "America/Sao_Paulo")
+    static function seeDate($timezone = "America/Sao_Paulo")
     {
         // Retorna o horário atual
         date_default_timezone_set($timezone);
@@ -58,7 +58,7 @@ trait Basic
         return date('Y-m-d');
     }
 
-    static function converterData($data)
+    static function dataIdent($data)
     {
         $data = explode("-", $data);
         $ano = $data[0];
@@ -67,53 +67,53 @@ trait Basic
         return "$dia/$mes/$ano";
     }
 
-    static function cumprimentar($language = NULL)
+    static function greetings($goodMorning = NULL, $goodAfternoon = NULL, $goodEvening = NULL)
     {
         // Cumprimenta de acordo com o horário
-        $hora = self::verHora();
+        $hora = self::seeHour();
         if ($hora >= 06 && $hora < 12) {
-            if ($language == 'english') {
+            if ($goodMorning == NULL) {
                 return "Good-Morning";
             } else {
-                return "Bom-Dia";
+                return $goodMorning;
             }
         } else if ($hora >= 12 && $hora < 18) {
-            if($language == 'english'){
+            if($goodAfternoon == NULL){
                 return "Good-Afternoon";
             }
-            return "Boa-Tarde";
+            return $goodAfternoon;
         } else {
-            if($language == "english"){
+            if($goodEvening == NULL){
                 return "Good-Evening";
             }
-            return "Boa-Noite";
+            return $goodEvening;
         }
     }
 
-    static function hash($valor, $quantidade = false)
+    static function hash($value, $quantity = false)
     // criptografa uma string, porém este comando nunca deve ser usado para senhas
     {
-        $pass = md5($valor);
-        if ($quantidade !== false) {
-            if ($quantidade >= 3 && $quantidade <= 32) {
-                return $pass = substr($pass, 0, $quantidade);
-            } else if ($quantidade < 3) {
-                return "É necessário uma quantidade mínima superior a 3 caracteres";
-            } else if ($quantidade > 32) {
-                return "Quantidade máxima de 32 atingida ou ultrapassada";
+        $pass = md5($value);
+        if ($quantity !== false) {
+            if ($quantity >= 3 && $quantity <= 32) {
+                return $pass = substr($pass, 0, $quantity);
+            } else if ($quantity < 3) {
+                return "It's necessary an amount of 3 numbers or more";
+            } else if ($quantity > 32) {
+                return "Maximun quantity of 32 numbers exceeded";
             }
         } else {
             return $pass;
         }
     }
 
-    static function criptografar($string)
+    static function encode($string)
     // FAZ UMA CRIPTOGRAFIA SEGURA DE UMA STRING, É NECESSÁRIO USAR O AUTENTICAR() PARA VERIFICAR A AUTENTICIDADE DO HASH
     {
         return password_hash($string, PASSWORD_DEFAULT);
     }
 
-    static function autenticar($senha, $criptografia)
+    static function auth($senha, $criptografia)
     // VERIFICA SE A CRIPTOGRAFIA COMBINA COM O PARÂMETRO PASSADO PELO USUÁRIO COM BASE NA CRIPTOGRAFIA DA FUNÇÃO CRIPTOGRAFAR()
     {
         return password_verify($senha, $criptografia);

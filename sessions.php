@@ -2,7 +2,7 @@
 namespace ShortPHP;
 trait Sessions
 {
-    static function iniciarSessao($nome, $regenerarId = 300)
+    static function startSession($nome, $regenerarId = 300)
     {
         // INICIAR SESSÃO
         session_name($nome);
@@ -24,7 +24,7 @@ trait Sessions
         return true;
     }
 
-    static function finalizarSessao($nome)
+    static function closeSession($nome)
     {
         session_start($nome);
         $_SESSION[$nome][] = array(); // Destruir os arrays

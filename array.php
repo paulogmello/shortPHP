@@ -1,9 +1,22 @@
 <?php
+
 namespace ShortPHP;
+
 trait fArray
 {
 
-    static function arredondamento(...$array)
+    static function arrayToJson($array)
+    {
+        // Converte array em JSON
+        return json_encode($array);
+    }
+    static function jsonToArray($array)
+    {
+        // Converte json em Array
+        return json_decode($array, true);
+    }
+
+    static function rounding(...$array)
     {
         // ARREDONDA VÁRIOS NÚMEROS
         try {
@@ -17,31 +30,31 @@ trait fArray
         }
     }
 
-    static function arrayJavascript($arrayPHP, $nomeArrayJavascript)
+    static function arrayJavascript($arrayPHP, $nameArrayJavascript)
     {
         // CONVERTE UM ARRAY PHP PARA JAVASCRIPT
         echo "<script>
-        let $nomeArrayJavascript = [";
+        let $nameArrayJavascript = [";
         foreach ($arrayPHP as $items) {
             echo "`$items`,";
         }
         echo "] </script>";
     }
 
-    public function bulkSelecionar($tabela, $linhas = "*", $param = "WHERE 1")
+    public function bulkSelect($table, $row = "*", $param = "WHERE 1")
     {
-        $tabela = str_replace(" ", "", $tabela);
-        $tabela = explode(',', $tabela);
+        $table = str_replace(" ", "", $table);
+        $table = explode(',', $table);
         $bulk = [];
 
-        foreach ($tabela as $i => $items) {
-            //    TRATAMENTO DAS LINHAS
-            if (is_array($linhas) == true) {
-                $linhasSelecionadas = $linhas[$i];
-            } else if ($linhas != "*") {
-                $linhasSelecionadas = $linhas;
+        foreach ($table as $i => $items) {
+            //    TRATAMENTO DAS row
+            if (is_array($row) == true) {
+                $rowSelecionadas = $row[$i];
+            } else if ($row != "*") {
+                $rowSelecionadas = $row;
             } else {
-                $linhasSelecionadas = "*";
+                $rowSelecionadas = "*";
             }
 
             if (is_array($param) == true) {
@@ -52,7 +65,7 @@ trait fArray
                 $paramSelecionadas = "WHERE 1";
             }
 
-            $bulk[$items] = $this->selecionar($items, $linhasSelecionadas, $paramSelecionadas);
+            $bulk[$items] = $this->selecionar($items, $rowSelecionadas, $paramSelecionadas);
         }
         return $bulk;
     }

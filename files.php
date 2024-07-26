@@ -4,13 +4,13 @@ namespace ShortPHP;
 
 trait Files
 {
-    static function lerArquivo($arquivo)
+    static function readFile($file)
     {
         // LÊ O ARQUIVO O RETORNA
-        return file_get_contents($arquivo);
+        return file_get_contents($file);
     }
 
-    static function criarDiretorio($dir)
+    static function makeDir($dir)
     {
         try {
             if (!is_dir($dir)) {
@@ -23,116 +23,116 @@ trait Files
         }
     }
 
-    static function escreverArquivo($arquivo, $conteudo, $sobrescrever = false)
+    static function writeFile($file, $content, $overwrite = false)
     // ESCREVE OU CRIA UM ARQUIVO NOVO COM O CONTEÚDO ADICIONADO
     {
         try {
-            $dir = pathinfo($arquivo)['dirname'] . '/';
-            self::criarDiretorio($dir);
-            if ($sobrescrever == false) {
-                file_put_contents($arquivo, $conteudo, FILE_APPEND | LOCK_EX);
+            $dir = pathinfo($file)['dirname'] . '/';
+            self::makeDir($dir);
+            if ($overwrite == false) {
+                file_put_contents($file, $content, FILE_APPEND | LOCK_EX);
             } else {
-                file_put_contents($arquivo, $conteudo, LOCK_EX);
+                file_put_contents($file, $content, LOCK_EX);
             }
             return true;
         } catch (\ERROR $e) {
-            echo "Houve um erro ao escrever o arquivo: " . $e;
+            echo "Error: " . $e;
         }
     }
 
-    static function enviarArquivo($arquivo, $pasta = './    ', $nomeFinal = false, $criptografar = false)
+    static function sendFile($file, $folder = './    ', $finalName = false, $encode = false)
     // ENVIA UM ARQUIVO PARA UM DIRETÓRIO
     {
 
         try {
-            $tipo = pathinfo($arquivo['name'], PATHINFO_EXTENSION);
-            if ($nomeFinal == false) {
-                $nomeArquivo = $arquivo['name'];
+            $fileType = pathinfo($file['name'], PATHINFO_EXTENSION);
+            if ($finalName == false) {
+                $fileName = $file['name'];
             } else {
-                $nomeArquivo = $nomeFinal . ".$tipo";
+                $fileName = $finalName . ".$fileType";
             }
 
-            if ($criptografar == true && $nomeFinal == false) {
-                $nomeArquivo = md5($nomeArquivo) . ".$tipo";
-            } else if ($criptografar == true && $nomeFinal != false) {
-                $nomeArquivo = $nomeFinal . md5($nomeArquivo) . ".$tipo";
+            if ($encode == true && $finalName == false) {
+                $fileName = md5($fileName) . ".$fileType";
+            } else if ($encode == true && $finalName != false) {
+                $fileName = $finalName . md5($fileName) . ".$fileType";
             }
 
-            $tmp = $arquivo['tmp_name'];
-            $arquivo = $pasta . $nomeArquivo;
-            self::criarDiretorio($pasta);
+            $tmp = $file['tmp_name'];
+            $file = $folder . $fileName;
+            self::makeDir($folder);
 
-            if (!move_uploaded_file($tmp, $arquivo)) {
+            if (!move_uploaded_file($tmp, $file)) {
                 // Falha ao mover o arquivo
                 return false;
             }
         } catch (\ERROR $e) {
-            echo "Houve um erro no envio do arquivo para a pasta: $e";
+            echo "Error: $e";
         }
     }
 
-    static function deletarArquivo($nome, $pasta, $criptogradado = false)
+    static function deleteFile($name, $folder, $encoded = false)
     {
         // DELETA UM ARQUIVO
         try {
-            if ($criptogradado == true) {
-                $tipo = pathinfo($nome, PATHINFO_EXTENSION);
-                $nomeArquivo = md5($nome) . ".$tipo";
+            if ($encoded == true) {
+                $fileType = pathinfo($name, PATHINFO_EXTENSION);
+                $fileName = md5($name) . ".$fileType";
             } else {
-                $nomeArquivo = $nome;
+                $fileName = $name;
             }
-            unlink($pasta . '/' . $nomeArquivo);
+            unlink($folder . '/' . $fileName);
             return true;
         } catch (\Error $e) {
             echo "Houve um erro na exclusão do arquivo: $e";
         }
     }
 
-    static function espacoLivre($pasta = "C:/")
+    static function seeFreeSpace($folder = "C:/")
     {
         // VERIFICA O ESPAÇO LIVRE
-        return disk_free_space($pasta);
+        return disk_free_space($folder);
     }
 
-    static function verExtensao($arquivo)
+    static function seeExtension($file)
     {
         // VERIFICA A EXTENSÃO DO ARQUIVO
-        return pathinfo($arquivo, PATHINFO_EXTENSION);
+        return pathinfo($file, PATHINFO_EXTENSION);
     }
 
-    private static function verificarModuloImagick()
+    private static function seeImagickModule()
     {
-        $modulo = "imagick";
-        if (extension_loaded($modulo)) {
+        $module = "imagick";
+        if (extension_loaded($module)) {
             return true;
         } else {
             return false;
         }
     }
 
-    private static function selecionarImagem($caminho)
+    private static function selectImage($caminho)
     {
         // SELECIONA UMA IMAGEM PARA O IMAGICK
         return new \Imagick(realpath($caminho));
     }
 
-    static function converter($arquivo, $formato, $pasta = NULL)
+    static function transform($file, $formato, $folder = NULL)
     {
         // CONVERTE UMA IMAGEM OU ARQUIVO PARA UM OUTRO FORMATO
         try {
-            if (self::verificarModuloImagick() == true) {
-                $temp = self::selecionarImagem($arquivo);
-                $fileName = pathinfo($arquivo, PATHINFO_FILENAME);
-                $realpath = realpath($arquivo);
+            if (self::seeImagickModule() == true) {
+                $temp = self::selectImage($file);
+                $fileName = pathinfo($file, PATHINFO_FILENAME);
+                $realpath = realpath($file);
                 $realpath = str_replace("\\", "/", $realpath);
                 $realpath = explode('/', $realpath);
                 array_pop($realpath);
                 $realpath = implode("/", $realpath);
-                if ($pasta != NULL) {
-                    self::criarDiretorio($pasta);
+                if ($folder != NULL) {
+                    self::makeDir($folder);
                 }
                 $temp->setImageFormat($formato);
-                $temp->writeImage("$realpath/$pasta/$fileName.$formato");
+                $temp->writeImage("$realpath/$folder/$fileName.$formato");
                 $temp->clear();
                 $temp->destroy();
                 return true;
@@ -144,7 +144,7 @@ trait Files
         }
     }
 
-    static function converterBase64($base64, $altura = 300, $largura = 300)
+    static function changetoBase64($base64, $height = 300, $width = 300)
     {
         // CONVERTE UMA IMAGEM PARA STRING BASE 64
         $base64 = preg_replace('/^data:image\/(png|jpeg|jpg);base64,/', '', $base64);
@@ -152,21 +152,21 @@ trait Files
 
         $im = new \Imagick();
         $im->readImageBlob($image);
-        $im->thumbnailImage($altura, $largura, true);
+        $im->thumbnailImage($height, $width, true);
 
         $output = $im->getimageblob();
         $im->getFormat();
         return $output;
     }
 
-    static function renderizarImagem($output, $type)
+    static function renderImage($output, $type)
     {
         // RENDERIZA UMA IMAGEM
         header("Content-type: $type");
         echo $output;
     }
 
-    static function converterImagemBase64($img)
+    static function convertImgTo64($img)
     {
         // CONVERTE UMA IMAGEM EM BASE64
         $mime = mime_content_type($img);

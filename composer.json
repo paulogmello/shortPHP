@@ -1,6 +1,6 @@
 {
     "name": "paulogmello/short-php",
-    "description": "Uma ferramenta PHP para facilitar conexões com banco de dados MYSQL + funções utilitárias",
+    "description": "A PHP lib to speed up your projects",
     "type": "library",
     "license": "MIT",
     "authors": [
