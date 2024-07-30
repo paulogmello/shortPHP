@@ -218,6 +218,7 @@ trait Database
             return true;
         } catch (\Exception $erro) {
             echo "Erro: " . $erro->getMessage();
+            echo"<hr>$sql";
         } finally {
             $this->closeConn(); //Encerrar conexão
         }

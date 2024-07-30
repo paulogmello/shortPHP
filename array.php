@@ -4,6 +4,11 @@ namespace ShortPHP;
 
 trait fArray
 {
+    static function chunk($array, $size = 1){
+        return array_chunk($array, $size);
+    }
+
+    
 
     static function arrayToJson($array)
     {
@@ -69,4 +74,6 @@ trait fArray
         }
         return $bulk;
     }
+
+    
 }
