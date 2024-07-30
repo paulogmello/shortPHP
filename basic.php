@@ -52,13 +52,13 @@ trait Basic
         return date('d/m/Y');
     }
 
-    static function dataSQL($timezone = "America/Sao_Paulo")
+    static function dateSQL($timezone = "America/Sao_Paulo")
     {
         date_default_timezone_set($timezone);
         return date('Y-m-d');
     }
 
-    static function dataIdent($data)
+    static function dateIdent($data)
     {
         $data = explode("-", $data);
         $ano = $data[0];
