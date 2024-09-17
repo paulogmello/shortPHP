@@ -4,11 +4,10 @@ namespace ShortPHP;
 
 trait fArray
 {
-    static function chunk($array, $size = 1){
+    static function chunk($array, $size = 1)
+    {
         return array_chunk($array, $size);
     }
-
-    
 
     static function arrayToJson($array)
     {
@@ -27,7 +26,7 @@ trait fArray
         try {
             $novoArray = [];
             foreach ($array as $i => $items) {
-                $novoArray[$i] = \shortPHP::arredondar($items);
+                $novoArray[$i] = \shortPHP::rounding($items);
             }
             return $novoArray;
         } catch (\Error $erro) {
@@ -74,6 +73,4 @@ trait fArray
         }
         return $bulk;
     }
-
-    
 }

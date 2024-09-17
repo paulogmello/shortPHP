@@ -58,6 +58,12 @@ trait Basic
         return date('Y-m-d');
     }
 
+    static function dateTimeSQL($timezone = "America/Sao_Paulo")
+    {
+        date_default_timezone_set($timezone);
+        return date('YYYY-MM-DD HH:MM:SS');
+    }
+
     static function dateIdent($data)
     {
         $data = explode("-", $data);
@@ -90,6 +96,14 @@ trait Basic
         }
     }
 
+    static function question($question, $yes, $not, $first = true){
+        if($question == true){
+            echo $yes;
+        } else {
+            echo $not;
+        }
+    } 
+
     static function hash($value, $quantity = false)
     // criptografa uma string, porém este comando nunca deve ser usado para senhas
     {
@@ -118,4 +132,5 @@ trait Basic
     {
         return password_verify($senha, $criptografia);
     }
+
 }

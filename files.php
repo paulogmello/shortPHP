@@ -19,7 +19,7 @@ trait Files
                 }
             }
         } catch (\Error $e) {
-            echo "Houve um erro na criação do diretório: $e";
+            echo "Error: $e";
         }
     }
 
