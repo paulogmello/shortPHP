@@ -61,7 +61,7 @@ trait Basic
     static function dateTimeSQL($timezone = "America/Sao_Paulo")
     {
         date_default_timezone_set($timezone);
-        return date('YYYY-MM-DD HH:MM:SS');
+        return date('Y-m-d H:i:s');
     }
 
     static function dateIdent($data)
