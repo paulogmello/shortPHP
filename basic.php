@@ -97,7 +97,7 @@ trait Basic
     }
 
     static function question($question, $yes, $not, $first = true){
-        if($question == true){
+        if($question == $first){
             return $yes;
         } else {
             return $not;
