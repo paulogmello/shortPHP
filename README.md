@@ -1,7 +1,7 @@
 # ShortPHP 1.5
 This library is for you who want use your time developing the system, pages, a lot of cool things and has no time to think about connections, databases, etc.
 
-With shortPHP, you use a few line of codes (one in most cases) to **select, update, insert, delete, and more in databases, send and delete files, and more**.
+With shortPHP, you use a few line of codes (one in most cases) to **select, update, insert, delete in databases, send and delete files, and many more**.
 
 We have some modules in shortPHP, like:
 | Module | Purpouse |
