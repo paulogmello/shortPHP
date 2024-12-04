@@ -4,13 +4,13 @@ namespace ShortPHP;
 
 trait Database
 {
-    private string $server;
-    private string $user;
-    private string $password;
-    private string $database;
-    private object $conn;
+    private $server;
+    private $user;
+    private $password;
+    private $database;
+    private $conn;
 
-    public function __construct(string $database, string $server = 'localhost', string $user = 'root', string $password = '')
+    public function __construct($database, $server = 'localhost', $user = 'root', $password = '')
     // FUNÇÃO CONSTRUTORA DA CLASSE
     {
         $this->server = $server;
@@ -24,7 +24,7 @@ trait Database
     {
         $this->conn = new \mysqli($this->server, $this->user, $this->password, $this->database);
         if ($this->conn->error) {
-            die("Conection Error");
+            die("Erro na Conexão");
         }
         return $this->conn;
     }
@@ -126,7 +126,7 @@ trait Database
             $result = $this->search("SELECT $row FROM $table $param");
             return $this->returnData($result);
         } catch (\mysqli_sql_exception $error) {
-            echo "Error: " . $error->getMessage();
+            echo "Ocorreu um erro: " . $error->getMessage();
         }
     }
 
@@ -174,7 +174,7 @@ trait Database
                 return null;
             }
         } catch (\mysqli_sql_exception $error) {
-            echo "Error: " . $error->getMessage();
+            echo "Ocorreu um erro: " . $error->getMessage();
         }
     }
 
@@ -197,7 +197,7 @@ trait Database
                 }
             }
         } catch (\mysqli_sql_exception $error) {
-            echo "Error: " . $error->getMessage();
+            echo "Ocorreu um erro: " . $error->getMessage();
         }
     }
 
@@ -383,7 +383,7 @@ trait Database
             $result = $this->search("SHOW TABLE STATUS LIKE '$tabela'");
             return $this->returnData($result)[0];
         } catch (\mysqli_sql_exception $error) {
-            echo "Error: " . $error->getMessage();
+            echo "Ocorreu um erro: " . $error->getMessage();
         }
     }
 
@@ -411,7 +411,7 @@ trait Database
             $this->conn = $this->newConn();
             $this->sendPrepare($sql);
         } catch (\mysqli_sql_exception $error) {
-            echo "Error: " . $error->getMessage();
+            echo "Ocorreu um erro: " . $error->getMessage();
         }
     }
 }
