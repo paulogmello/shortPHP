@@ -14,7 +14,6 @@ require_once 'array.php';
 require_once 'basic.php';
 require_once 'database.php';
 require_once 'files.php';
-require_once 'mail.php';
 require_once 'math.php';
 require_once 'sessions.php';
 
@@ -28,7 +27,6 @@ class shortPHP
     use ShortPHP\Database; // Database functions
     use ShortPHP\fArray; // Arrays functions;
     use ShortPHP\Files; // File management functions
-    use ShortPHP\Mail; // Mails functions
     use ShortPHP\Math; // Math functions
     use ShortPHP\Sessions; // Sessions functions
 
