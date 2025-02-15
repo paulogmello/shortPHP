@@ -73,4 +73,42 @@ trait fArray
         }
         return $bulk;
     }
+
+    static function arraySearch($array, $searchValue, $path = []){
+        foreach ($array as $key => $value) {
+            $currentPath = array_merge($path, [$key]);
+    
+            if (is_array($value)) {
+                $result = self::arraySearch($value, $searchValue, $currentPath);
+                if ($result !== null) {
+                    return $result;
+                }
+            } else {
+                if ($value === $searchValue) {
+                    return $currentPath;
+                }
+            }
+        }
+        return null;
+    } 
+
+    static function indexSearch($array, $searchIndex, $path = []) {
+        $results = [];
+    
+        foreach ($array as $key => $value) {
+            $currentPath = array_merge($path, [$key]);
+            if ($key === $searchIndex) {
+                $results[] = [
+                    'path' => $currentPath,
+                    'value' => $value        
+                ];
+            }
+
+            if (is_array($value)) {
+                $results = array_merge($results, self::indexSearch($value, $searchIndex, $currentPath));
+            }
+        }
+    
+        return $results;
+    }
 }
