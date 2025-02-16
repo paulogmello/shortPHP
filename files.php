@@ -174,4 +174,20 @@ trait Files
         $base64_imagem = 'data:' . $mime . ';base64,' . base64_encode($dados);
         return $base64_imagem;
     }
+
+    static function countFiles($folder, $type = "*")
+    {
+        if (!is_dir($folder)) {
+            return 0;
+        }
+        if ($type === "*") {
+            $pattern = rtrim($folder, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . "*";
+        } else {
+            $pattern = rtrim($folder, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . "*.$type";
+        }
+        
+        $files = glob($pattern);
+
+        return is_array($files) ? count($files) : 0;
+    }
 }
