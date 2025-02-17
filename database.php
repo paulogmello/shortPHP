@@ -126,7 +126,19 @@ trait Database
             $result = $this->search("SELECT $row FROM $table $param");
             return $this->returnData($result);
         } catch (\mysqli_sql_exception $error) {
-            echo "Ocorreu um erro: " . $error->getMessage();
+            return "Ocorreu um erro: " . $error->getMessage();
+        }
+    }
+
+    public function selectDistinct($table, $row = "*", $param = "WHERE 1")
+    // FAZ UMA CONSULTA NO SQL COM O TÍTULO DO EVENTO E RETORNA UM ARRAY 
+    {
+        try {
+            $this->conn = $this->newConn();
+            $result = $this->search("SELECT DISTINCT $row FROM $table $param");
+            return $this->returnData($result);
+        } catch (\mysqli_sql_exception $error) {
+            return "Ocorreu um erro: " . $error->getMessage();
         }
     }
 
