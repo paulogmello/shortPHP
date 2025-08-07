@@ -96,9 +96,13 @@ trait Database
             } else if (is_string($items) == true) {
                 // Verificar se é STRING
                 $tipos[$i] = 's';
-            } else {
-                // Deve ser BOB;
-                $tipos[$i] = 'b';
+            }
+            else if (is_bool($items) == true) {
+                $tipos[$i] = 'i';
+            }
+            else {
+                // Se não entendeu, será considerado uma String;
+                $tipos[$i] = 's';
             }
         }
 
