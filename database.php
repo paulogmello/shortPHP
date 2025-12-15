@@ -11,7 +11,6 @@ trait Database
     private $conn;
 
     public function __construct($database, $server = 'localhost', $user = 'root', $password = '')
-    // FUNÇÃO CONSTRUTORA DA CLASSE
     {
         $this->server = $server;
         $this->user = $user;
@@ -20,7 +19,6 @@ trait Database
     }
 
     private function newConn()
-    // ABRE UMA NOVA CONEXÃO COM O BANCO DE DADOS
     {
         $this->conn = new \mysqli($this->server, $this->user, $this->password, $this->database);
         if ($this->conn->error) {
@@ -30,20 +28,21 @@ trait Database
     }
 
     private function closeConn()
-    // ENCERRA A CONEXÃO
     {
-        $this->conn->close();
+        if ($this->conn instanceof \mysqli) {
+            @$this->conn->close();
+        }
     }
 
     private function search($sql)
-    // FAZ UMA CONSULTA SQL PADRÃO
     {
         return $this->conn->query($sql);
     }
 
     private function addItens($result)
-    // FUNÇÃO USADA PARA TRANSFORMAR AS LINHAS EM UM ARRAY
     {
+
+        $items = [];
         while ($rows = $result->fetch_assoc()) {
             $items[] = $rows;
         }
@@ -69,61 +68,133 @@ trait Database
 
     public function sendPrepare($sql)
     {
-        $this->conn = $this->newConn();
-        $stmt = $this->conn->prepare($sql);
+        try {
+            $this->conn = $this->newConn();
+            $stmt = $this->conn->prepare($sql);
 
-        if (!$stmt) {
-            throw new \Exception("Erro na preparação da declaração: " . $this->conn->error);
+            if (!$stmt) {
+                throw new \Exception("Erro na preparação da declaração: " . $this->conn->error);
+            }
+            if (!$stmt->execute()) {
+                throw new \Exception("Houve um problema durante o envio de dados");
+            }
+            return true;
+        } finally {
+            $this->closeConn();
         }
-        if (!$stmt->execute()) {
-            throw new \Exception("Houve um problema durante o envio de dados");
-        }
-        // Se chegou até aqui, a execução foi bem-sucedida
-        return true;
     }
 
     public function prepare($param, $sql)
     {
-        //PREPARA O SQL PARA SER ENVIADO
-        $tipos = []; // tipos para o bind_param baseado no foreach abaixo
+        $tipos = [];
         foreach ($param as $i => $items) {
-            if (filter_var($items, FILTER_VALIDATE_INT) == true) {
-                // Verificar se é INT
+            if (filter_var($items, FILTER_VALIDATE_INT) === true) {
                 $tipos[$i] = 'i';
-            } else if (filter_var($items, FILTER_VALIDATE_FLOAT) == true) {
-                // Verificar se é FLOAT
+            } else if (filter_var($items, FILTER_VALIDATE_FLOAT) === true) {
                 $tipos[$i] = 'd';
-            } else if (is_string($items) == true) {
-                // Verificar se é STRING
-                $tipos[$i] = 's';
-            }
-            else if (is_bool($items) == true) {
+            } else if (is_bool($items) === true) {
                 $tipos[$i] = 'i';
-            }
-            else {
-                // Se não entendeu, será considerado uma String;
+            } else {
                 $tipos[$i] = 's';
             }
         }
 
-        $tipos = implode('', $tipos); //Refatora os tipos do array
+        $tipos = implode('', $tipos);
 
-        $this->conn = $this->newConn();
-        $stmt = $this->conn->prepare($sql); //Preparar sql
+        try {
+            $this->conn = $this->newConn();
+            $stmt = $this->conn->prepare($sql);
 
-        if (!$stmt) {
-            throw new \Exception("Erro na preparação da declaração: " . $this->conn->error);
+            if (!$stmt) {
+                throw new \Exception("Erro na preparação da declaração: " . $this->conn->error);
+            }
+
+            $bindResult = $stmt->bind_param($tipos, ...$param);
+
+            if (!$bindResult || !$stmt->execute()) {
+                throw new \Exception("Houve um problema durante o envio de dados. Tipos: $tipos<br>$sql<br>");
+            }
+
+            return true;
+        } finally {
+            $this->closeConn();
+        }
+    }
+    public function selectPrepare($sql, ...$params)
+    {
+        $tipos = '';
+        foreach ($params as $p) {
+            if (is_int($p) || is_bool($p)) $tipos .= 'i';
+            else if (is_float($p)) $tipos .= 'd';
+            else $tipos .= 's';
         }
 
-        $bindResult = $stmt->bind_param($tipos, ...$param); //RESULTADO
+        try {
+            $this->conn = $this->newConn();
+            $stmt = $this->conn->prepare($sql);
 
-        if (!$bindResult || !$stmt->execute()) {
-            throw new \Exception("Houve um problema durante o envio de dados. Tipos: $tipos<br>$sql<br>");
+            if (!$stmt) {
+                throw new \Exception("Erro na preparação da declaração: " . $this->conn->error);
+            }
+
+            if (!empty($params)) {
+                $stmt->bind_param($tipos, ...$params);
+            }
+
+            if (!$stmt->execute()) {
+                throw new \Exception("Falha ao executar SELECT preparado");
+            }
+
+            $result = $stmt->get_result();
+            $items = [];
+
+            if ($result) {
+                while ($row = $result->fetch_assoc()) {
+                    $items[] = $row;
+                }
+            }
+
+            return $items;
+        } finally {
+            $this->closeConn();
         }
     }
 
+    public function executePrepare($sql, ...$params)
+    {
+        $tipos = '';
+        foreach ($params as $p) {
+            if (is_int($p) || is_bool($p)) $tipos .= 'i';
+            else if (is_float($p)) $tipos .= 'd';
+            else $tipos .= 's';
+        }
+
+        try {
+            $this->conn = $this->newConn();
+            $stmt = $this->conn->prepare($sql);
+
+            if (!$stmt) {
+                throw new \Exception("Erro na preparação da declaração: " . $this->conn->error);
+            }
+
+            if (!empty($params)) {
+                $stmt->bind_param($tipos, ...$params);
+            }
+
+            return (bool)$stmt->execute();
+        } finally {
+            $this->closeConn();
+        }
+    }
+
+
+    public function deletePrepare($table, $whereSql, ...$params)
+    {
+        $sql = "DELETE FROM $table $whereSql";
+        return $this->executePrepare($sql, ...$params);
+    }
+
     public function select($table, $row = "*", $param = "WHERE 1")
-    // FAZ UMA CONSULTA NO SQL COM O TÍTULO DO EVENTO E RETORNA UM ARRAY 
     {
         try {
             $this->conn = $this->newConn();
@@ -135,7 +206,6 @@ trait Database
     }
 
     public function selectDistinct($table, $row = "*", $param = "WHERE 1")
-    // FAZ UMA CONSULTA NO SQL COM O TÍTULO DO EVENTO E RETORNA UM ARRAY 
     {
         try {
             $this->conn = $this->newConn();
@@ -147,20 +217,18 @@ trait Database
     }
 
     public function merge($tabelas, $linhas, $params = "WHERE 1", $duplicadas = false)
-    // UNE DUAS OU MAIS TABELAS ATRAVÉS DO SELECT
     {
         try {
-            $tabs = explode(',', $tabelas); //Transformar tabelas em array
-            $quant = count($tabs); //Quantidade de tabelas
+            $tabs = explode(',', $tabelas);
+            $quant = count($tabs);
 
-            //Verificação se terão duplicadas
             if ($duplicadas == false) {
                 $duplicadas = "UNION";
             } else {
                 $duplicadas = "UNION ALL";
             }
 
-            $sql = []; //Sql parâmetro
+            $sql = [];
 
             foreach ($tabs as $i => $items) {
                 if ($i + 1 == $quant) {
@@ -180,7 +248,6 @@ trait Database
     }
 
     public function write($tabela, $linha, $param = "WHERE 1")
-    // FAZ UMA CONSULTA NO SQL E ESCREVE O RESULTADO
     {
         try {
             $item = $this->select($tabela, $linha, $param);
@@ -195,18 +262,16 @@ trait Database
     }
 
     public function count($tabela, $param = "WHERE 1")
-    // FAZ UMA CONTAGEM E RETORNA A QUANTIDADE DE ITENS DE ACORDO COM OS PARÂMETROS
     {
         try {
             $this->conn = $this->newConn();
-            $sql = "SELECT COUNT('id') as $tabela FROM $tabela $param"; //código SQL
-            $result = $this->search($sql); //Enviar requisição
+            $sql = "SELECT COUNT('id') as $tabela FROM $tabela $param";
+            $result = $this->search($sql);
             if ($result != false) {
                 if ($result->num_rows) {
-                    //Retorno
                     $items = $this->addItens($result);
                     $this->closeConn();
-                    return $items[0][$tabela]; //Retornar resultado
+                    return $items[0][$tabela];
                 } else {
                     $this->closeConn();
                     return null;
@@ -218,88 +283,74 @@ trait Database
     }
 
     public function insert($tabela, $linhas, ...$infos)
-    // ENVIA OS DADOS PARA O BANCO DE DADOS
     {
         try {
-            //Organizar o SQL
-            $linhas = str_replace(" ", "", $linhas); // Tirar espaços
-            $qntItems = explode(',', $linhas); // Criar array de linhas
-            $qntItems = count($qntItems); // Descobrir quantidades
-            $values = str_repeat('?,', $qntItems - 1) . '?'; // Adicionar ? do VALUES
+            $linhas = str_replace(" ", "", $linhas);
+            $qntItems = explode(',', $linhas);
+            $qntItems = count($qntItems);
+            $values = str_repeat('?,', $qntItems - 1) . '?';
 
-            $sql = "INSERT INTO $tabela ($linhas) VALUES ($values)"; // SQL pronto
+            $sql = "INSERT INTO $tabela ($linhas) VALUES ($values)";
 
-            $this->prepare($infos, $sql); // Chamar função preparar (bind_param);
+            $this->prepare($infos, $sql);
 
             return true;
         } catch (\Exception $erro) {
             echo "Erro: " . $erro->getMessage();
-            echo"<hr>$sql";
-        } finally {
-            $this->closeConn(); //Encerrar conexão
+            echo "<hr>$sql";
         }
     }
 
     public function update($tabela, $params, $linhas, ...$infos)
     {
-        //ATUALIZAR DADOS DO BANCO DE DADOS
         try {
-            $linhas = str_replace(" ", "", $linhas); // Tirar espaços
+            $linhas = str_replace(" ", "", $linhas);
             $linha = explode(',', $linhas);
-            $qntItems = explode(',', $linhas); // Criar array de linhas
-            $qntItems = count($qntItems); // Descobrir quantidades
-            $relacao = []; // Array para abrigar o SQL alterado
+            $qntItems = explode(',', $linhas);
+            $qntItems = count($qntItems);
+            $relacao = [];
             for ($i = 0; $i < $qntItems; $i++) {
-                // Organizar o SQL alterado
                 $item = $linha[$i];
                 $relacao[$i] = "$item = ?";
             }
-            $relacao = implode(',', $relacao); // Transformar em string
-            $sql = "UPDATE `$tabela` SET $relacao $params"; // SQL pronto
+            $relacao = implode(',', $relacao);
+            $sql = "UPDATE `$tabela` SET $relacao $params";
 
-            $this->prepare($infos, $sql); // Chamar função preparar (bind_param);
+            $this->prepare($infos, $sql);
             return true;
         } catch (\Exception $erro) {
             echo "Erro: " . $erro->getMessage();
-        } finally {
-            $this->closeConn(); //Encerrar conexão
         }
     }
 
+
+
     public function delete($table, $param)
     {
-        // EXCLUI DADOS DO SERVIDOR COM BASE NO SQL
         try {
             $sql = "DELETE FROM $table $param";
             $this->sendPrepare($sql);
         } catch (\Exception $erro) {
-            // Captura e lida com exceções
             echo "Erro: " . $erro->getMessage();
             return false;
-        } finally {
-            // Certifique-se de fechar a conexão, independentemente do resultado
-            $this->closeConn(); //Encerrar conexão
         }
     }
 
     public function create($nome, ...$params)
     {
-        // CRIA UMA TABELA
         try {
             $this->conn = $this->newConn();
             $colunaDados = implode(',', $params);
             $sql = "CREATE TABLE $nome ($colunaDados)";
             $this->sendPrepare($sql);
-            $this->closeConn(); //Encerrar conexão
+            $this->closeConn();
         } catch (\Exception $erro) {
-            // Captura e lida com exceções
             echo "Erro: " . $erro->getMessage();
             return false;
         }
     }
 
     static function createDatabase($nome, $entrar = false, $servidor = 'localhost', $usuario = 'root', $senha = '')
-    // CRIAR UM BANCO DE DADOS
     {
         try {
             $sql = "CREATE DATABASE $nome";
@@ -317,13 +368,11 @@ trait Database
         } catch (\Error $erro) {
             echo "Houve um erro durante a criação do banco de dados: " . $erro->getMessage();
         } finally {
-            // Fecha a conexão
             $conn->close();
         }
     }
 
     static function deleteDatabase($nome, $servidor = 'localhost', $usuario = 'root', $senha = '')
-    // CRIAR UM BANCO DE DADOS
     {
         $sql = "DROP DATABASE $nome";
         $conn = new \mysqli($servidor, $usuario, $senha);
@@ -335,65 +384,47 @@ trait Database
         } else {
             return "Erro ao criar o banco de dados: " . $conn->error;
         }
-
-        // Fecha a conexão
         $conn->close();
     }
 
     public function add($nome, ...$params)
     {
-        //ADICIONA UMA COLUNA NA TABELA
         try {
             $parametros = implode(', ADD ', $params);
             $sql = "ALTER TABLE $nome ADD $parametros;";
             $this->sendPrepare($sql);
         } catch (\Exception $erro) {
-            // Captura e lida com exceções
             echo "Erro: " . $erro->getMessage();
             return false;
-        } finally {
-            // Certifique-se de fechar a conexão, independentemente do resultado
-            $this->closeConn(); //Encerrar conexão
         }
     }
 
     public function remove($nome, ...$params)
-    //REMOVE UMA COLUNA COM BASE NOS PARÂMETROS
     {
         try {
             $parametros = implode(', DROP ', $params);
             $sql = "ALTER TABLE $nome DROP $parametros;";
             $this->sendPrepare($sql);
         } catch (\Exception $erro) {
-            // Captura e lida com exceções
             echo "Erro: " . $erro->getMessage();
             return false;
-        } finally {
-            // Certifique-se de fechar a conexão, independentemente do resultado
-            $this->closeConn(); //Encerrar conexão
         }
     }
 
     public function modify($nome, ...$params)
-    //MODIFICA UMA COLUNA 
     {
         try {
             $parametros = implode(', MODIFY ', $params);
             $sql = "ALTER TABLE $nome MODIFY $parametros;";
             $this->sendPrepare($sql);
         } catch (\Exception $erro) {
-            // Captura e lida com exceções
             echo "Erro: " . $erro->getMessage();
             return false;
-        } finally {
-            // Certifique-se de fechar a conexão, independentemente do resultado
-            $this->closeConn(); //Encerrar conexão
         }
     }
 
     public function status($tabela)
     {
-        // Mostra informações sobre a tabela
         try {
             $this->conn = $this->newConn();
             $result = $this->search("SHOW TABLE STATUS LIKE '$tabela'");
@@ -404,23 +435,17 @@ trait Database
     }
 
     public function createView($nome, $tabela, $colunas, $param = "WHERE 1")
-    // CRIAR UMA VIEW
     {
         try {
             $sql = "CREATE VIEW $nome AS SELECT $colunas FROM $tabela $param";
             $this->sendPrepare($sql);
         } catch (\Exception $erro) {
-            // Captura e lida com exceções
             echo "Erro: " . $erro->getMessage();
             return false;
-        } finally {
-            // Certifique-se de fechar a conexão, independentemente do resultado
-            $this->closeConn(); //Encerrar conexão
         }
     }
 
     public function deleteView($view)
-    // DELETA UMA VIEW
     {
         try {
             $sql = "DROP VIEW $view";
