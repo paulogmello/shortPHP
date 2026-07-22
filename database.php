@@ -120,45 +120,88 @@ trait Database
             $this->closeConn();
         }
     }
-    public function selectPrepare($sql, ...$params)
-    {
-        $tipos = '';
-        foreach ($params as $p) {
-            if (is_int($p) || is_bool($p)) $tipos .= 'i';
-            else if (is_float($p)) $tipos .= 'd';
-            else $tipos .= 's';
-        }
+   public function selectPrepare($sql, ...$params)
+{
+    $tipos = '';
 
-        try {
-            $this->conn = $this->newConn();
-            $stmt = $this->conn->prepare($sql);
-
-            if (!$stmt) {
-                throw new \Exception("Erro na preparação da declaração: " . $this->conn->error);
-            }
-
-            if (!empty($params)) {
-                $stmt->bind_param($tipos, ...$params);
-            }
-
-            if (!$stmt->execute()) {
-                throw new \Exception("Falha ao executar SELECT preparado");
-            }
-
-            $result = $stmt->get_result();
-            $items = [];
-
-            if ($result) {
-                while ($row = $result->fetch_assoc()) {
-                    $items[] = $row;
-                }
-            }
-
-            return $items;
-        } finally {
-            $this->closeConn();
+    foreach ($params as $param) {
+        if (is_int($param) || is_bool($param)) {
+            $tipos .= 'i';
+        } elseif (is_float($param)) {
+            $tipos .= 'd';
+        } else {
+            $tipos .= 's';
         }
     }
+
+    try {
+        $this->conn = $this->newConn();
+
+        $stmt = $this->conn->prepare($sql);
+
+        if (!$stmt) {
+            throw new \Exception(
+                'Erro na preparação da declaração: ' .
+                $this->conn->error
+            );
+        }
+
+        if (!empty($params)) {
+            $bindResult = $stmt->bind_param(
+                $tipos,
+                ...$params
+            );
+
+            if (!$bindResult) {
+                throw new \Exception(
+                    'Falha ao vincular os parâmetros.'
+                );
+            }
+        }
+
+        if (!$stmt->execute()) {
+            throw new \Exception(
+                'Falha ao executar SELECT preparado.'
+            );
+        }
+
+        $metadata = $stmt->result_metadata();
+
+        if (!$metadata) {
+            $stmt->close();
+            return [];
+        }
+
+        $row = [];
+        $references = [];
+
+        while ($field = $metadata->fetch_field()) {
+            $row[$field->name] = null;
+            $references[] = &$row[$field->name];
+        }
+
+        $stmt->bind_result(...$references);
+
+        $items = [];
+
+        while ($stmt->fetch()) {
+            $currentRow = [];
+
+            foreach ($row as $column => $value) {
+                $currentRow[$column] = $value;
+            }
+
+            $items[] = $currentRow;
+        }
+
+        $metadata->free();
+        $stmt->close();
+
+        return $items;
+    } finally {
+        $this->closeConn();
+    }
+}
 
     public function executePrepare($sql, ...$params)
     {
